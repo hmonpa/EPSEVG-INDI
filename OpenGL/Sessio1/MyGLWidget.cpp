@@ -47,7 +47,7 @@ void MyGLWidget::paintGL ()
 
   //glDrawArrays(GL_TRIANGLES, 0, 3)      // Ej 1.1: Número de vértices a pintar!
   //glDrawArrays(GL_TRIANGLES, 0, 6);     // Ej 1.2
-  glDrawArrays(GL_TRIANGLES, 0, 6);       // Ej 1.3
+  glDrawArrays(GL_TRIANGLES, 0, 9);       // Ej 1.3
 
   // Pintem l'escena
 
