@@ -29,10 +29,12 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     
     // attribute locations
     GLuint vertexLoc;
+    GLuint vertexCol;   // ---- Declaración ----
     
     // Program
     QOpenGLShaderProgram *program;
 
-    GLuint VAO1, VBO1, VBOcolor;
+    GLuint VAO1, VBO1;
+    GLuint VBO2;        // ---- Declaración segundo VBO ----
     GLint ample, alt;
 };

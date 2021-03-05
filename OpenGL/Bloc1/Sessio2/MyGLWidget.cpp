@@ -59,22 +59,24 @@ void MyGLWidget::resizeGL (int w, int h)
 
 void MyGLWidget::creaBuffers ()
 {
+  // ---- Vértices del triangulo ----
   glm::vec3 Vertices[3];  // Tres vèrtexs amb X, Y i Z
   Vertices[0] = glm::vec3(-1.0, -1.0, 0.0);
   Vertices[1] = glm::vec3(1.0, -1.0, 0.0);
   Vertices[2] = glm::vec3(0.0, 1.0, 0.0);
   
-  glm::vec3 Color[3];
-  Color[0] = glm::vec3(1.0, 0.0, 0.0);
-  Color[1] = glm::vec3(0.0, 1.0, 0.0);
-  Color[2] = glm::vec3(0.0, 0.0, 1.0);
+  // ---- Color para cada vértice ----
+  glm::vec3 col[3];       // Buffer de 3 coordenades amb colors de cada vértex
+  col[0] = glm::vec3(1.0, 0.0, 0.0);
+  col[1] = glm::vec3(0.0, 1.0, 0.0);
+  col[2] = glm::vec3(0.0, 0.0, 1.0);
 
   // Creació del Vertex Array Object (VAO) que usarem per pintar
   glGenVertexArrays(1, &VAO1);
   glBindVertexArray(VAO1);
 
   // Creació del buffer amb les dades dels vèrtexs
-  GLuint VBO1;
+  //GLuint VBO1;
   glGenBuffers(1, &VBO1);
   glBindBuffer(GL_ARRAY_BUFFER, VBO1);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
@@ -82,15 +84,16 @@ void MyGLWidget::creaBuffers ()
   glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(vertexLoc);
 
-  // Creació del buffer amb les dades dels Colors
-  GLuint VBOcolor;
-  glGenBuffers(1, &VBOcolor);
-  glBindBuffer(GL_ARRAY_BUFFER, VBOcolor);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(Color), Color, GL_STATIC_DRAW);
+  // ---- Creación del buffer con los datos del color ----
+  //GLuint VBO2;
+  glGenBuffers(1, &VBO2);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(col), col, GL_STATIC_DRAW);
 
+  // ---- Activación atributo que usaremos para el color (vertexCol) ----
+  glVertexAttribPointer(vertexCol, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(vertexCol);
 
-  glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(vertexLoc);
 
   // Desactivem el VAO
   glBindVertexArray(0);
@@ -99,8 +102,8 @@ void MyGLWidget::creaBuffers ()
 void MyGLWidget::carregaShaders()
 {
   // Creem els shaders per al fragment shader i el vertex shader
-  QOpenGLShader fs (QOpenGLShader::Fragment, this); // Shader para el FS
-  QOpenGLShader vs (QOpenGLShader::Vertex, this);   // Shader para el VS
+  QOpenGLShader fs (QOpenGLShader::Fragment, this);     // ---- Shader para el FS ----
+  QOpenGLShader vs (QOpenGLShader::Vertex, this);       // ---- Shader para el VS ----
 
   // Carreguem el codi dels fitxers i els compilem
   fs.compileSourceFile("shaders/basicShader.frag");
@@ -119,4 +122,7 @@ void MyGLWidget::carregaShaders()
 
   // Obtenim identificador per a l'atribut “vertex” del vertex shader
   vertexLoc = glGetAttribLocation (program->programId(), "vertex");
+
+  vertexCol = glGetAttribLocation (program->programId(), "col");     // ---- Da color al triangulo: Relaciona el VS con el programa ----
+
 }
