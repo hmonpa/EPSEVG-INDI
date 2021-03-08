@@ -13,5 +13,3 @@ SOURCES += main.cpp \
 DISTFILES += \
     shaders/basicShader.frag \
     shaders/basicShader.vert
-
-RESOURCES +=
