@@ -6,7 +6,8 @@ uniform float transparencia;
 
 void main() {
 
-      FragColor = vertex_color;
+
+      FragColor = transparencia*vertex_color;
 
 }
 

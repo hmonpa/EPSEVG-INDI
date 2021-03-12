@@ -25,8 +25,10 @@ void MyGLWidget::initializeGL ()
 
   // Activar el canal de transparència. (NEW!)
   // --- Només utilitzat pel problema de transparencia ---
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_SRC_ALPHA, GL_SRC1_ALPHA);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_SRC1_ALPHA);
+
+  glDisable(GL_BLEND); // Desactivación buffer transparencia de forma explicita
 
   glClearColor (200/255.0, 220/255.0, 255/255.0, 1.0); // defineix color de fons (d'esborrat)
   carregaShaders();
@@ -53,7 +55,7 @@ void MyGLWidget::paintGL ()
    pintaMuntanyes();
 
    pintaBaseGronxador();
-   //pintaGronxador();
+   pintaGronxador();
    //pintaPesos();
 
   // Desactivem el VAO
@@ -124,14 +126,14 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
 
 void MyGLWidget::transformacioMuntanya(double h, double xPos, float transparencia){
 // h = escala = 0.7
-// xPos = posicioXinicial = -1.0 (1a muntanya), = 0.5 (2a muntanya)
+// xPos = posicioXinicial = -1.0 (1a muntanya), = -0.5 (2a muntanya)
 
         if (xPos == this->xPrimeraMuntanya)
         {
             // Codi per a la TG necessària
             glm::mat4 transform(1.0f);     // Matriz de transformación
             transform = glm::translate(transform, glm::vec3(0.0, -0.3, 0.0));
-            transform = glm::scale (transform, glm::vec3(0.5, 0.5, 0.5));
+            transform = glm::scale (transform, glm::vec3(0.5, 0.5, 0.0));
             transform = glm::scale (transform, glm::vec3(h+0.3,h*2,0.0));
             transform = glm::translate(transform, glm::vec3 (xPos, 0.0, 0.0));
             // Se envia a OpenGL
@@ -141,13 +143,12 @@ void MyGLWidget::transformacioMuntanya(double h, double xPos, float transparenci
         {
             // Codi per a la TG necessària
             glm::mat4 transform(1.0f);     // Matriz de transformación
-            transform = glm::translate(transform, glm::vec3(0.3, -0.3, 0.0));
-            transform = glm::scale (transform, glm::vec3(0.5, 0.5, 0.5));
+            transform = glm::translate(transform, glm::vec3(0.25, -0.25, 0.0));
+            transform = glm::scale (transform, glm::vec3(-xPos, -xPos, 0.0));
             transform = glm::scale (transform, glm::vec3(h+0.3,h+0.3,0.0));
             transform = glm::translate(transform, glm::vec3 (xPos, xPos, 0.0));
             // Se envia a OpenGL
             glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]); //   ^ glm::value_ptr(TG) )
-
         }
 }
 
@@ -155,10 +156,8 @@ void MyGLWidget::transformacioMuntanya(double h, double xPos, float transparenci
 void MyGLWidget::transformacioBaseGronxador(){
 
     // Codi per a la TG necessària
-    glm::mat4 transformGronx (1.0f);
-    transformGronx = glm::scale (transformGronx, glm::vec3(0.2,0.2,0.0));
-    glUniformMatrix4fv (gronxLoc, 1, GL_FALSE, &transformGronx[0][0]); //   ^ glm::value_ptr(TG) )
-
+    glm::mat4 transform (1.0f);
+    glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]); //   ^ glm::value_ptr(TG) )
 }
 
 
@@ -354,5 +353,4 @@ void MyGLWidget::carregaShaders()
 
   muntaLoc = glGetUniformLocation (program->programId(), "transform");
   transparenciaLoc = glGetUniformLocation(program->programId(), "transparencia");
-  gronxLoc = glGetUniformLocation(program->programId(), "transformGronx");
 }
