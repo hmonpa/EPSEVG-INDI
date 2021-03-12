@@ -5,6 +5,8 @@
 #include <QKeyEvent>
 #include "glm/glm.hpp"
 
+#include "glm/gtc/matrix_transform.hpp"     // Se añade para poder realizar transformaciones geometricas
+
 #define MUNTANYA_NUM_VERTEXS 8
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
@@ -52,12 +54,17 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void carregaShaders ();
 
     //-------------------------------------------------
+
+
     // attribute locations
     GLuint vertexLoc, colorLoc;
     // uniforms
     GLuint transLoc;
     GLuint transparenciaLoc;
-    
+
+    GLuint muntaLoc;
+    GLuint gronxLoc;
+
     // Program
     QOpenGLShaderProgram *program;
 

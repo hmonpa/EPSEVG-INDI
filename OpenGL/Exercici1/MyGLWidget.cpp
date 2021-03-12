@@ -22,7 +22,12 @@ void MyGLWidget::initializeGL ()
 {
   // Cal inicialitzar l'ús de les funcions d'OpenGL
   initializeOpenGLFunctions();
-  
+
+  // Activar el canal de transparència. (NEW!)
+  // --- Només utilitzat pel problema de transparencia ---
+  //glEnable(GL_BLEND);
+  //glBlendFunc(GL_SRC_ALPHA, GL_SRC1_ALPHA);
+
   glClearColor (200/255.0, 220/255.0, 255/255.0, 1.0); // defineix color de fons (d'esborrat)
   carregaShaders();
   creaBuffers();
@@ -44,10 +49,12 @@ void MyGLWidget::paintGL ()
 #endif
 
    glClear (GL_COLOR_BUFFER_BIT);  // Esborrem el frame-buffer
+   // Funciones generales
    pintaMuntanyes();
+
    pintaBaseGronxador();
-   pintaGronxador();
-   pintaPesos();
+   //pintaGronxador();
+   //pintaPesos();
 
   // Desactivem el VAO
   glBindVertexArray(0);
@@ -60,9 +67,9 @@ void MyGLWidget::resizeGL (int w, int h)
 }
 
 void MyGLWidget::pintaBaseGronxador(){
-    transformacioBaseGronxador();
-    glBindVertexArray(VAO_TRIANGLE);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    transformacioBaseGronxador();           // Función que define la TG y la envía a OpenGL
+    glBindVertexArray(VAO_TRIANGLE);        // Activación VAO
+    glDrawArrays(GL_TRIANGLES, 0, 3);       // Llamada a glDrawArrays (Pnta la escena)
 
 }
 
@@ -84,10 +91,19 @@ void MyGLWidget::pintaPesos(){
 }
 void MyGLWidget::pintaMuntanyes(){
 
-    transformacioMuntanya(0.7, this->xPrimeraMuntanya, 0.5);
+    // Transforma primera muntanya
+    float transparencia = 0.5;
+    glUniform1f(transparenciaLoc, transparencia);
+    transformacioMuntanya(0.7, this->xPrimeraMuntanya, transparencia);
     glBindVertexArray(VAO_MUNTANYA);
     glDrawArrays(GL_TRIANGLE_FAN, 0, MUNTANYA_NUM_VERTEXS);
 
+    // Transforma segona muntanya
+    transparencia = 1.0;
+    glUniform1f(transparenciaLoc, transparencia);
+    transformacioMuntanya(0.7, this->xSegonaMuntanya, transparencia);
+    glBindVertexArray(VAO_MUNTANYA);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, MUNTANYA_NUM_VERTEXS);
 }
 
 void MyGLWidget::keyPressEvent(QKeyEvent* event)
@@ -107,20 +123,42 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
 
 
 void MyGLWidget::transformacioMuntanya(double h, double xPos, float transparencia){
+// h = escala = 0.7
+// xPos = posicioXinicial = -1.0 (1a muntanya), = 0.5 (2a muntanya)
 
-        // Codi per a la TG necessària
-        glm::mat4 transform (1.0f);
-        //.....
-        // recordeu enviar-li a Open-GL !!
+        if (xPos == this->xPrimeraMuntanya)
+        {
+            // Codi per a la TG necessària
+            glm::mat4 transform(1.0f);     // Matriz de transformación
+            transform = glm::translate(transform, glm::vec3(0.0, -0.3, 0.0));
+            transform = glm::scale (transform, glm::vec3(0.5, 0.5, 0.5));
+            transform = glm::scale (transform, glm::vec3(h+0.3,h*2,0.0));
+            transform = glm::translate(transform, glm::vec3 (xPos, 0.0, 0.0));
+            // Se envia a OpenGL
+            glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]); //   ^ glm::value_ptr(TG) )
+        }
+        if (xPos == this->xSegonaMuntanya)
+        {
+            // Codi per a la TG necessària
+            glm::mat4 transform(1.0f);     // Matriz de transformación
+            transform = glm::translate(transform, glm::vec3(0.3, -0.3, 0.0));
+            transform = glm::scale (transform, glm::vec3(0.5, 0.5, 0.5));
+            transform = glm::scale (transform, glm::vec3(h+0.3,h+0.3,0.0));
+            transform = glm::translate(transform, glm::vec3 (xPos, xPos, 0.0));
+            // Se envia a OpenGL
+            glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]); //   ^ glm::value_ptr(TG) )
+
+        }
 }
 
 
 void MyGLWidget::transformacioBaseGronxador(){
 
     // Codi per a la TG necessària
-    glm::mat4 transform (1.0f);
-    //.....
-    // recordeu enviar-li a Open-GL !!
+    glm::mat4 transformGronx (1.0f);
+    transformGronx = glm::scale (transformGronx, glm::vec3(0.2,0.2,0.0));
+    glUniformMatrix4fv (gronxLoc, 1, GL_FALSE, &transformGronx[0][0]); //   ^ glm::value_ptr(TG) )
+
 }
 
 
@@ -162,19 +200,27 @@ void MyGLWidget::creaBufferMuntanya(){
      glm::vec3(-h2/2, 1-h2, 0.0)
     };
 
-
+    // --- Pinta muntanya ---
     glm::vec3 Colors[MUNTANYA_NUM_VERTEXS];
-    for(int i=0;i<MUNTANYA_NUM_VERTEXS;i++) {
+    for(int i=0;i<3;i++) {
       Colors[i] = glm::vec3(155/255.0, 121/255.0, 61/255.0);
     }
+    for(int i=3; i<MUNTANYA_NUM_VERTEXS; i++){
+        Colors[i] = glm::vec3(1.0f, 1.0f, 1.0f);
+    }
+
 
     // Creació del Vertex Array Object (VAO) que usarem per pintar
     glGenVertexArrays(1, &VAO_MUNTANYA);
     glBindVertexArray(VAO_MUNTANYA);
 
+    //glGenVertexArrays(1, &VAO_MUNTANYA2);
+   //glBindVertexArray(VAO_MUNTANYA2);
+
     // Creació del buffer amb les dades dels vèrtexs
-    GLuint VBO[2];
-    glGenBuffers(2, VBO);
+    GLuint VBO[4];
+    glGenBuffers(4, VBO);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
     // Activem l'atribut que farem servir per vèrtex (només el 0 en aquest cas)
@@ -186,6 +232,19 @@ void MyGLWidget::creaBufferMuntanya(){
     glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
     glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(colorLoc);
+
+    // Segona muntanya
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(vertexLoc);
+
+    // Creació del buffer de colors
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[3]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
+    glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(colorLoc);
+
 
 
     // Desactivem el VAO
@@ -293,4 +352,7 @@ void MyGLWidget::carregaShaders()
   vertexLoc = glGetAttribLocation (program->programId(), "vertex");
   colorLoc = glGetAttribLocation (program->programId(), "color");
 
+  muntaLoc = glGetUniformLocation (program->programId(), "transform");
+  transparenciaLoc = glGetUniformLocation(program->programId(), "transparencia");
+  gronxLoc = glGetUniformLocation(program->programId(), "transformGronx");
 }

@@ -3,8 +3,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"     // Se añade para poder realizar transformaciones geometricas
-#include <QKeyEvent>                        // --- AÑADIDO ---
+
 
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core

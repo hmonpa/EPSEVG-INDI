@@ -6,7 +6,7 @@
 
 MyGLWidget::MyGLWidget (QWidget* parent) : QOpenGLWidget(parent), program(NULL)
 {
-  setFocusPolicy(Qt::StrongFocus);  // per rebre events de teclat
+  setFocusPolicy(Qt::StrongFocus);      // per rebre events de teclat
 }
 
 MyGLWidget::~MyGLWidget ()
@@ -20,6 +20,8 @@ void MyGLWidget::initializeGL ()
   // Cal inicialitzar l'ús de les funcions d'OpenGL
   initializeOpenGLFunctions();
   
+  //scl=0.5;
+
   glClearColor (0.5, 0.7, 1.0, 1.0); // defineix color de fons (d'esborrat)
   carregaShaders();
   creaBuffers();
@@ -83,35 +85,6 @@ void MyGLWidget::creaBuffers ()
   glBindVertexArray(0);
 }
 
-void MyGLWidget::keyPressEvent(QKeyEvent *e){
-    makeCurrent();
-
-    switch(e->key()){
-
-        case Qt::Key_S:
-            scl+=0.1;
-            glUniform1f(varLoc,scl);
-            break;
-
-        case Qt::Key_D:
-            scl-=0.1;
-            glUniform1f(varLoc,scl);
-            break;
-
-        default:
-            e->ignore(); // propagar al pare
-    }
-
-    update();
-}
-
-void MyGLWidget::modelTransform() { // Matriu de transformació, inicialment identitat (I)
-    glm::mat4 TG(1.0);
-
-    TG = glm::translate(TG, glm::vec3 (-0.5, 0.5, 0.0));
-    glUniformMatrix4fv (transLoc, 1, GL_FALSE, &TG[0][0]); //   ^ glm::value_ptr(TG) )
-}
-
 void MyGLWidget::carregaShaders()
 {
   // Creem els shaders per al fragment shader i el vertex shader
@@ -135,6 +108,7 @@ void MyGLWidget::carregaShaders()
 
   // --- Se define la variable una vez cargados los shaders ---
   varLoc = glGetUniformLocation (program->programId(), "val");
+
   // --- Envio el valor del uniform ---
   glUniform1f(varLoc, scl);
 
@@ -142,6 +116,33 @@ void MyGLWidget::carregaShaders()
   transLoc = glGetUniformLocation(program->programId(), "TG");
 }
 
+void MyGLWidget::keyPressEvent(QKeyEvent *e){
+    makeCurrent();      // --- Hay que llamarlo en llamadas externas a paintGL(), resizeGL() o initializeGL()
+
+    switch(e->key()){
+
+        case Qt::Key_S:
+            scl+=0.1;
+            glUniform1f(varLoc,scl);
+            break;
+
+        case Qt::Key_D:
+            scl-=0.1;
+            glUniform1f(varLoc,scl);
+            break;
+
+        default:
+            e->ignore(); // propagar al pare
+    }
+    update();
+}
+
+void MyGLWidget::modelTransform() { // Matriu de transformació, inicialment identitat (I)
+    glm::mat4 TG(1.0);
+
+    TG = glm::translate(TG, glm::vec3 (-0.5, 0.5, 0.0));
+    glUniformMatrix4fv (transLoc, 1, GL_FALSE, &TG[0][0]); //   ^ glm::value_ptr(TG) )
+}
 
 
 
