@@ -37,7 +37,7 @@ void MyGLWidget::initializeGL ()
   // Inicialització de variables d'estat
   this->xPrimeraMuntanya = -1.0;
   this->xSegonaMuntanya = -0.5;
-  this->anglePalanca = 0;
+  this->anglePalanca = 0.0;
 }
 
 void MyGLWidget::paintGL ()
@@ -56,7 +56,7 @@ void MyGLWidget::paintGL ()
 
    pintaBaseGronxador();
    pintaGronxador();
-   //pintaPesos();
+   pintaPesos();
 
   // Desactivem el VAO
   glBindVertexArray(0);
@@ -113,9 +113,11 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
     makeCurrent();
     switch (event->key()) {
         case Qt::Key_A: {
+            anglePalanca-=0.05;
             break;
         }
         case Qt::Key_D: {
+            anglePalanca+=0.05;
             break;
         }
         default: event->ignore(); break;
@@ -146,7 +148,7 @@ void MyGLWidget::transformacioMuntanya(double h, double xPos, float transparenci
             transform = glm::translate(transform, glm::vec3(0.25, -0.25, 0.0));
             transform = glm::scale (transform, glm::vec3(-xPos, -xPos, 0.0));
             transform = glm::scale (transform, glm::vec3(h+0.3,h+0.3,0.0));
-            transform = glm::translate(transform, glm::vec3 (xPos, xPos, 0.0));
+            transform = glm::translate(transform, glm::vec3(xPos, xPos, 0.0));
             // Se envia a OpenGL
             glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]); //   ^ glm::value_ptr(TG) )
         }
@@ -154,27 +156,28 @@ void MyGLWidget::transformacioMuntanya(double h, double xPos, float transparenci
 
 
 void MyGLWidget::transformacioBaseGronxador(){
-
-    // Codi per a la TG necessària
     glm::mat4 transform (1.0f);
-    glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]); //   ^ glm::value_ptr(TG) )
+    glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
 
 void MyGLWidget::transformacioGronxador(){
-
-    // Codi per a la TG necessària
     glm::mat4 transform (1.0f);
-    //.....
-    // recordeu enviar-li a Open-GL !!
+    transform = glm::translate (transform, glm::vec3(0.0,-0.75,0.0));
+    transform = glm::rotate (transform, anglePalanca, glm::vec3(0.0,0.0,0.05));
+    transform = glm::scale (transform, glm::vec3(0.8,0.1,0.0));
+    glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
 
 void MyGLWidget::transformacioPes(int left){
-    // Codi per a la TG necessària
     glm::mat4 transform (1.0f);
-    //.....
-    // recordeu enviar-li a Open-GL !!
+
+    if(left == 1) transform = glm::translate (transform, glm::vec3(0.35, -0.65, 0.0));
+    if(left == -1) transform = glm::translate (transform, glm::vec3(-0.35, -0.65, 0.0));
+    transform = glm::rotate (transform, anglePalanca, glm::vec3(0.05,0.05,0.0));
+    transform = glm::scale (transform, glm::vec3(0.1,0.1,0.0));
+    glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
 void MyGLWidget::creaBuffers (){
@@ -212,9 +215,6 @@ void MyGLWidget::creaBufferMuntanya(){
     // Creació del Vertex Array Object (VAO) que usarem per pintar
     glGenVertexArrays(1, &VAO_MUNTANYA);
     glBindVertexArray(VAO_MUNTANYA);
-
-    //glGenVertexArrays(1, &VAO_MUNTANYA2);
-   //glBindVertexArray(VAO_MUNTANYA2);
 
     // Creació del buffer amb les dades dels vèrtexs
     GLuint VBO[4];
