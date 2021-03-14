@@ -28,7 +28,7 @@ void MyGLWidget::initializeGL ()
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_SRC1_ALPHA);
 
-  glDisable(GL_BLEND); // Desactivación buffer transparencia de forma explicita
+  glDisable(GL_BLEND); // Desactivació buffer transparencia de forma explicita
 
   glClearColor (200/255.0, 220/255.0, 255/255.0, 1.0); // defineix color de fons (d'esborrat)
   carregaShaders();
@@ -51,9 +51,9 @@ void MyGLWidget::paintGL ()
 #endif
 
    glClear (GL_COLOR_BUFFER_BIT);  // Esborrem el frame-buffer
+
    // Funciones generales
    pintaMuntanyes();
-
    pintaBaseGronxador();
    pintaGronxador();
    pintaPesos();
@@ -71,7 +71,7 @@ void MyGLWidget::resizeGL (int w, int h)
 void MyGLWidget::pintaBaseGronxador(){
     transformacioBaseGronxador();           // Función que define la TG y la envía a OpenGL
     glBindVertexArray(VAO_TRIANGLE);        // Activación VAO
-    glDrawArrays(GL_TRIANGLES, 0, 3);       // Llamada a glDrawArrays (Pnta la escena)
+    glDrawArrays(GL_TRIANGLES, 0, 3);       // Llamada a glDrawArrays (Pinta la escena)
 
 }
 
@@ -113,11 +113,21 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
     makeCurrent();
     switch (event->key()) {
         case Qt::Key_A: {
-            anglePalanca-=0.05;
+            if(anglePalanca>=-0.55)
+            {
+                anglePalanca-=0.05;
+                transformacioPes(+1);
+                transformacioPes(-1);
+            }
             break;
         }
         case Qt::Key_D: {
-            anglePalanca+=0.05;
+            if(anglePalanca<=0.5)
+            {
+                anglePalanca+=0.05;
+                transformacioPes(-1);
+                transformacioPes(+1);
+            }
             break;
         }
         default: event->ignore(); break;
@@ -133,24 +143,24 @@ void MyGLWidget::transformacioMuntanya(double h, double xPos, float transparenci
         if (xPos == this->xPrimeraMuntanya)
         {
             // Codi per a la TG necessària
-            glm::mat4 transform(1.0f);     // Matriz de transformación
+            glm::mat4 transform(1.0f);     // Matriu de transformació
             transform = glm::translate(transform, glm::vec3(0.0, -0.3, 0.0));
             transform = glm::scale (transform, glm::vec3(0.5, 0.5, 0.0));
             transform = glm::scale (transform, glm::vec3(h+0.3,h*2,0.0));
             transform = glm::translate(transform, glm::vec3 (xPos, 0.0, 0.0));
-            // Se envia a OpenGL
+            // S'envia a OpenGL
             glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]); //   ^ glm::value_ptr(TG) )
         }
         if (xPos == this->xSegonaMuntanya)
         {
             // Codi per a la TG necessària
-            glm::mat4 transform(1.0f);     // Matriz de transformación
+            glm::mat4 transform(1.0f);     // Matriu de transformació
             transform = glm::translate(transform, glm::vec3(0.25, -0.25, 0.0));
             transform = glm::scale (transform, glm::vec3(-xPos, -xPos, 0.0));
             transform = glm::scale (transform, glm::vec3(h+0.3,h+0.3,0.0));
             transform = glm::translate(transform, glm::vec3(xPos, xPos, 0.0));
-            // Se envia a OpenGL
-            glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]); //   ^ glm::value_ptr(TG) )
+            // S'envia a OpenGL
+            glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]);
         }
 }
 
@@ -173,10 +183,37 @@ void MyGLWidget::transformacioGronxador(){
 void MyGLWidget::transformacioPes(int left){
     glm::mat4 transform (1.0f);
 
-    if(left == 1) transform = glm::translate (transform, glm::vec3(0.35, -0.65, 0.0));
-    if(left == -1) transform = glm::translate (transform, glm::vec3(-0.35, -0.65, 0.0));
-    transform = glm::rotate (transform, anglePalanca, glm::vec3(0.05,0.05,0.0));
+    if(left == 1)               // Pes dret
+    {
+        if (anglePalanca < 0)   // Inclinació cap a la dreta
+        {
+            transform = glm::translate (transform, glm::vec3(0.35, -0.65+anglePalanca/2.5, 0.0));
+            transform = glm::rotate(transform, anglePalanca, glm::vec3(0.0,0.0,0.5));
+        }
+        if (anglePalanca > 0)   // Inclinació cap a l'esquerra
+        {
+            transform = glm::translate (transform, glm::vec3(0.35-anglePalanca/5.5, -0.65+anglePalanca/3.5, 0.0));
+            transform = glm::rotate(transform, anglePalanca, glm::vec3(0.0,-0.15,0.5));
+        }
+        if (anglePalanca == 0) transform = glm::translate (transform, glm::vec3(0.35, -0.65, 0.0));
+    }
+    if(left == -1)              // Pes esquerre
+    {
+        if (anglePalanca < 0)   // Inclinació cap a la dreta
+        {
+            transform = glm::translate (transform, glm::vec3(-0.35-anglePalanca/5.5, -0.65-anglePalanca/3.5, 0.0));
+            transform = glm::rotate(transform, anglePalanca, glm::vec3(0.0,-0.15,0.5));
+        }
+        if (anglePalanca > 0)   // Inclinació cap a l'esquerra
+        {
+            transform = glm::translate (transform, glm::vec3(-0.35, -0.65-anglePalanca/2.5, 0.0));
+            transform = glm::rotate(transform, anglePalanca, glm::vec3(0.0,0.0,1.0));
+        }
+        // Escalat comú per ambdós pesos
+        if (anglePalanca == 0) transform = glm::translate (transform, glm::vec3(-0.35, -0.65, 0.0));
+    }
     transform = glm::scale (transform, glm::vec3(0.1,0.1,0.0));
+    // S'envia a OpenGL
     glUniformMatrix4fv (muntaLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
@@ -204,22 +241,26 @@ void MyGLWidget::creaBufferMuntanya(){
 
     // --- Pinta muntanya ---
     glm::vec3 Colors[MUNTANYA_NUM_VERTEXS];
-    for(int i=0;i<3;i++) {
+    int i = 0;
+    for(i=0;i<MUNTANYA_NUM_VERTEXS && id==0;i++) {
       Colors[i] = glm::vec3(155/255.0, 121/255.0, 61/255.0);
+      if (i==2) id=1;
     }
-    for(int i=3; i<MUNTANYA_NUM_VERTEXS; i++){
+    while (i < MUNTANYA_NUM_VERTEXS)
+    {
         Colors[i] = glm::vec3(1.0f, 1.0f, 1.0f);
+        i++;
     }
-
 
     // Creació del Vertex Array Object (VAO) que usarem per pintar
     glGenVertexArrays(1, &VAO_MUNTANYA);
     glBindVertexArray(VAO_MUNTANYA);
 
     // Creació del buffer amb les dades dels vèrtexs
-    GLuint VBO[4];
-    glGenBuffers(4, VBO);
+    GLuint VBO[3];
+    glGenBuffers(3, VBO);
 
+    // Primera muntanya
     glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
     // Activem l'atribut que farem servir per vèrtex (només el 0 en aquest cas)
@@ -238,17 +279,8 @@ void MyGLWidget::creaBufferMuntanya(){
     glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(vertexLoc);
 
-    // Creació del buffer de colors
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[3]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
-    glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(colorLoc);
-
-
-
     // Desactivem el VAO
     glBindVertexArray(0);
-
 }
 
 
@@ -284,7 +316,6 @@ void MyGLWidget::creaBufferQuadrat(){
     glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(colorLoc);
 
-
     // Desactivem el VAO
     glBindVertexArray(0);
 
@@ -303,7 +334,6 @@ void MyGLWidget::creaBufferTriangle ()
     Colors[i] = glm::vec3(0.0, 0.0, 0.0);
   }
 
-
   // Creació del Vertex Array Object (VAO) que usarem per pintar
   glGenVertexArrays(1, &VAO_TRIANGLE);
   glBindVertexArray(VAO_TRIANGLE);
@@ -317,13 +347,11 @@ void MyGLWidget::creaBufferTriangle ()
   glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(vertexLoc);
 
-
   // Creació del buffer de colors
   glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
   glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(colorLoc);
-
 
   // Desactivem el VAO
   glBindVertexArray(0);
@@ -350,7 +378,6 @@ void MyGLWidget::carregaShaders()
   // Obtenim identificador per a l'atribut “vertex” del vertex shader
   vertexLoc = glGetAttribLocation (program->programId(), "vertex");
   colorLoc = glGetAttribLocation (program->programId(), "color");
-
   muntaLoc = glGetUniformLocation (program->programId(), "transform");
   transparenciaLoc = glGetUniformLocation(program->programId(), "transparencia");
 }

@@ -52,7 +52,6 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void transformacioBaseGronxador();
     //-------------------------------------------------
     void carregaShaders ();
-
     //-------------------------------------------------
 
 
@@ -73,6 +72,5 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     //status
     float xPrimeraMuntanya,xSegonaMuntanya;
-
     float anglePalanca;
 };
