@@ -6,14 +6,313 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>711</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Exercici2</string>
   </property>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>200</y>
+     <width>251</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QSlider" name="horizontalSlider_R">
+      <property name="maximum">
+       <number>255</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSlider" name="horizontalSlider_G">
+      <property name="maximum">
+       <number>255</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSlider" name="horizontalSlider_B">
+      <property name="maximum">
+       <number>255</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>220</y>
+     <width>91</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QLCDNumber" name="lcdNumber_R"/>
+    </item>
+    <item>
+     <widget class="QLCDNumber" name="lcdNumber_G"/>
+    </item>
+    <item>
+     <widget class="QLCDNumber" name="lcdNumber_B"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>320</y>
+     <width>221</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="Ok">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Quit">
+      <property name="text">
+       <string>Quit</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget_3">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>220</y>
+     <width>31</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QLabel" name="R">
+      <property name="styleSheet">
+       <string notr="true">font: 75 11pt &quot;Ubuntu Condensed&quot;;</string>
+      </property>
+      <property name="text">
+       <string>R</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="G">
+      <property name="styleSheet">
+       <string notr="true">font: 75 11pt &quot;Ubuntu Condensed&quot;;</string>
+      </property>
+      <property name="text">
+       <string>G</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="B">
+      <property name="styleSheet">
+       <string notr="true">font: 75 11pt &quot;Ubuntu Condensed&quot;;</string>
+      </property>
+      <property name="text">
+       <string>B</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="Labelpropi" name="label">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>10</y>
+     <width>631</width>
+     <height>171</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Labelpropi</class>
+   <extends>QLabel</extends>
+   <header>labelpropi.h</header>
+   <slots>
+    <slot>numR(int)</slot>
+    <slot>numG(int)</slot>
+    <slot>numB(int)</slot>
+    <slot>Ok()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>Quit</sender>
+   <signal>clicked()</signal>
+   <receiver>Exercici2</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>657</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>471</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_B</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>lcdNumber_B</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>349</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>379</x>
+     <y>375</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_G</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>lcdNumber_G</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>274</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_R</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>lcdNumber_R</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>242</x>
+     <y>238</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Ok</sender>
+   <signal>clicked()</signal>
+   <receiver>label</receiver>
+   <slot>Ok()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>531</x>
+     <y>357</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>503</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_R</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>label</receiver>
+   <slot>numR(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>237</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_G</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>label</receiver>
+   <slot>numG(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>292</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>118</x>
+     <y>91</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_B</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>label</receiver>
+   <slot>numB(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>346</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>143</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

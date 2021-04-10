@@ -16,11 +16,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    labelpropi.cpp \
     main.cpp \
     exercici2.cpp
 
 HEADERS += \
-    exercici2.h
+    exercici2.h \
+    labelpropi.h
 
 FORMS += \
     exercici2.ui
