@@ -17,13 +17,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mylineedit.cpp
+    exercici2.cpp
 
 HEADERS += \
-    mylineedit.h
+    exercici2.h
 
 FORMS += \
-    mylineedit.ui
+    exercici2.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

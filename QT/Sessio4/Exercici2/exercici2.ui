@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MyLineEdit</class>
- <widget class="QWidget" name="MyLineEdit">
+ <class>Exercici2</class>
+ <widget class="QWidget" name="Exercici2">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MyLineEdit</string>
+   <string>Exercici2</string>
   </property>
  </widget>
  <resources/>
