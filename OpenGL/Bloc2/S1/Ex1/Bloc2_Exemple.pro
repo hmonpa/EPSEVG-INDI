@@ -9,3 +9,7 @@ HEADERS += MyForm.h MyGLWidget.h
 
 SOURCES += main.cpp MyForm.cpp \
         MyGLWidget.cpp 
+
+DISTFILES += \
+    shaders/basicShader.frag \
+    shaders/basicShader.vert

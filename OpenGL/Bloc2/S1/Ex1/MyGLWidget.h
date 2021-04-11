@@ -31,8 +31,9 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void carregaShaders ();
     void modelTransform ();
 
+    void projectTransform ();
     // attribute locations
-    GLuint vertexLoc, colorLoc;
+    GLuint vertexLoc, colorLoc, projLoc;
     // uniform locations
     GLuint transLoc;
     // VAO i VBO names

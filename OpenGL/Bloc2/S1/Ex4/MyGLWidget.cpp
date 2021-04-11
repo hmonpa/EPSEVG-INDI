@@ -20,8 +20,14 @@ void MyGLWidget::initializeGL ()
   initializeOpenGLFunctions();  
 
   glClearColor(0.5, 0.7, 1.0, 1.0); // defineix color de fons (d'esborrat)
+
+  // Activació Z-Buffer
+  glEnable(GL_DEPTH_TEST);
+
   carregaShaders();
   creaBuffers();
+  projectTransform();
+  viewTransform();
 }
 
 void MyGLWidget::paintGL () 
@@ -38,17 +44,17 @@ void MyGLWidget::paintGL ()
 // useu els paràmetres que considereu (els que hi ha són els de per defecte)
 //  glViewport (0, 0, ample, alt);
   
-  // Esborrem el frame-buffer
-  glClear (GL_COLOR_BUFFER_BIT);
+  // Esborrem el frame-buffer a la vegada que el buffer de profunditats
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Carreguem la transformació de model
   modelTransform ();
 
   // Activem el VAO per a pintar la caseta 
-  glBindVertexArray (VAO_Casa);
+  glBindVertexArray (VAO_homer);
 
   // pintem
-  glDrawArrays(GL_TRIANGLES, 0, 9);
+  glDrawArrays(GL_TRIANGLES, 0, homer.faces().size() * 3);
 
   glBindVertexArray (0);
 }
@@ -88,7 +94,7 @@ void MyGLWidget::creaBuffers ()
 {
   // Dades de la caseta
   // Dos VBOs, un amb posició i l'altre amb color
-  glm::vec3 posicio[9] = {
+  /*glm::vec3 posicio[9] = {
 	glm::vec3(-0.5, -1.0, -0.5),
 	glm::vec3( 0.5, -1.0, -0.5),
 	glm::vec3(-0.5,  0.0, -0.5),
@@ -109,23 +115,29 @@ void MyGLWidget::creaBuffers ()
 	glm::vec3(1,0,0),
 	glm::vec3(0,1,0),
 	glm::vec3(0,0,1)
-  };
+  };*/
+
+  // Càrrega del objecte Model
+  homer.load("/home/hector/Escritorio/INDI/OpenGL/Bloc2/models/HomerProves.obj");
 
   // Creació del Vertex Array Object per pintar
-  glGenVertexArrays(1, &VAO_Casa);
-  glBindVertexArray(VAO_Casa);
+  glGenVertexArrays(1, &VAO_homer);
+  glBindVertexArray(VAO_homer);
 
-  GLuint VBO_Casa[2];
-  glGenBuffers(2, VBO_Casa);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_Casa[0]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(posicio), posicio, GL_STATIC_DRAW);
+  // Construcció de dos VBOs
+  // 1 - a partir del mètode VBO_vertices()
+  glGenBuffers(1, &VBO_homer);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO_homer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*homer.faces().size()*3*3, homer.VBO_vertices(), GL_STATIC_DRAW);
 
   // Activem l'atribut vertexLoc
   glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(vertexLoc);
 
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_Casa[1]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
+  // 2 - a partir del mètode VBO_matdiff()
+  glGenBuffers(1, &VBO_homer2);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO_homer2);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*homer.faces().size()*3*3, homer.VBO_matdiff(), GL_STATIC_DRAW);
 
   // Activem l'atribut colorLoc
   glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -158,5 +170,20 @@ void MyGLWidget::carregaShaders()
   colorLoc = glGetAttribLocation (program->programId(), "color");
   // Uniform locations
   transLoc = glGetUniformLocation(program->programId(), "TG");
+  projLoc = glGetUniformLocation(program->programId(), "proj");
+  viewLoc = glGetUniformLocation(program->programId(), "view");
 }
 
+
+void MyGLWidget::projectTransform(){
+
+  glm::mat4 Proj=glm::perspective((float)M_PI/2.0f, 1.0f, 1.0f, 3.0f);
+  glUniformMatrix4fv(projLoc, 1, GL_FALSE, &Proj[0][0]);
+
+}
+
+void MyGLWidget::viewTransform(){
+  glm::mat4 View = glm::lookAt(glm::vec3(0,0,1),glm::vec3(0,0,0),glm::vec3(0,1,0));
+  glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &View[0][0]);
+
+}
