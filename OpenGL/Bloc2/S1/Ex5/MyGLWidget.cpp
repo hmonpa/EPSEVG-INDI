@@ -27,8 +27,6 @@ void MyGLWidget::initializeGL ()
   carregaShaders();
   creaBuffers();
 
-  projectTransform();
-  viewTransform();
   //rota=float(M_PI/4);
 }
 
@@ -47,17 +45,25 @@ void MyGLWidget::paintGL ()
 //  glViewport (0, 0, ample, alt);
   
   // Esborrem el frame-buffer a la vegada que el buffer de profunditats
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
   // Carreguem la transformació de model
+  projectTransform();
+  viewTransform();
   modelTransform ();
-  modelTransformY();
+  //modelTransformY();
 
-  // Activem el VAO per a pintar la caseta 
+  // Activem el VAO per a pintar el Homer
   glBindVertexArray (VAO_homer);
-
   // pintem
   glDrawArrays(GL_TRIANGLES, 0, homer.faces().size() * 3);
+
+
+  modelTransformTerra();
+  // Activación VAO para pintar tierra
+  glBindVertexArray(VAO_terra);
+  // Pintado
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
   glBindVertexArray (0);
 }
@@ -67,16 +73,19 @@ void MyGLWidget::modelTransform ()
   // Matriu de transformació de model
   glm::mat4 transform (1.0f);
   transform = glm::scale(transform, glm::vec3(scale));
+  transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
   glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
-void MyGLWidget::modelTransformY()
+void MyGLWidget::modelTransformTerra()
 {
-    // Segona transformació per a que el Homer roti en el eix Y
+    // Segona transformació per a que es dibuxi el terra (només matriu identitat)
       glm::mat4 transform (1.0f);
+      transform = glm::translate(transform, glm::vec3(0,0,0));
       transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
       glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 }
+
 void MyGLWidget::resizeGL (int w, int h) 
 {
   ample = w;
@@ -89,10 +98,12 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
   switch (event->key()) {
     case Qt::Key_S: { // escalar a més gran
       scale += 0.05;
+      modelTransform();
       break;
     }
     case Qt::Key_D: { // escalar a més petit
       scale -= 0.05;
+      modelTransform();
       break;
     }
     case Qt::Key_R: {
@@ -106,31 +117,6 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
 
 void MyGLWidget::creaBuffers () 
 {
-  // Dades de la caseta
-  // Dos VBOs, un amb posició i l'altre amb color
-  /*glm::vec3 posicio[9] = {
-	glm::vec3(-0.5, -1.0, -0.5),
-	glm::vec3( 0.5, -1.0, -0.5),
-	glm::vec3(-0.5,  0.0, -0.5),
-	glm::vec3(-0.5,  0.0, -0.5),
-	glm::vec3( 0.5, -1.0, -0.5),
-	glm::vec3( 0.5,  0.0, -0.5),
-	glm::vec3( 0.5,  0.0, -0.5),
-	glm::vec3( 0.0,  0.6, -0.5),
-	glm::vec3(-0.5,  0.0, -0.5)
-  }; 
-  glm::vec3 color[9] = {
-	glm::vec3(1,0,0),
-	glm::vec3(0,1,0),
-	glm::vec3(0,0,1),
-	glm::vec3(0,0,1),
-	glm::vec3(0,1,0),
-	glm::vec3(1,0,0),
-	glm::vec3(1,0,0),
-	glm::vec3(0,1,0),
-	glm::vec3(0,0,1)
-  };*/
-
   // Càrrega del objecte Model
   homer.load("/home/hector/Escritorio/INDI/OpenGL/Bloc2/models/HomerProves.obj");
 
@@ -156,6 +142,40 @@ void MyGLWidget::creaBuffers ()
   // Activem l'atribut colorLoc
   glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(colorLoc);
+
+  // Primer VBO - posición | Segundo VBO - color
+  glm::vec3 pos_terra[4] = {
+      glm::vec3(-1.0, -1.0, -1.0),
+      glm::vec3(-1.0, -1.0, 1.0),
+      glm::vec3(1.0, -1.0, 1.0),
+      glm::vec3(1.0, -1.0, 1.0)
+  };
+  glm::vec3 col_terra[4] = {
+      glm::vec3(1,0,1),
+      glm::vec3(1,0,1),
+      glm::vec3(1,0,1),
+      glm::vec3(1,0,1)
+  };
+
+  glGenVertexArrays(1, &VAO_terra);
+  glBindVertexArray(VAO_terra);
+
+  glGenBuffers(1, &VBO_terra);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO_terra);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(pos_terra), pos_terra, GL_STATIC_DRAW);
+
+  // Activem l'atribut vertexLoc
+  glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(vertexLoc);
+
+  glGenBuffers(1, &VBO_terra2);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO_terra2);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(col_terra), col_terra, GL_STATIC_DRAW);
+
+  // Activem l'atribut colorLoc
+  glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(colorLoc);
+
 
   glBindVertexArray (0);
 }
@@ -191,7 +211,7 @@ void MyGLWidget::carregaShaders()
 
 void MyGLWidget::projectTransform(){
 
-  glm::mat4 Proj=glm::perspective((float)M_PI/2.0f, 1.0f, 1.0f, 3.0f);
+  glm::mat4 Proj=glm::perspective((float)M_PI/2.0f, 1.0f, 0.3f, 3.0f);
   glUniformMatrix4fv(projLoc, 1, GL_FALSE, &Proj[0][0]);
 
 }

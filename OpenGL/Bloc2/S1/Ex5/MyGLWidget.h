@@ -34,14 +34,15 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void modelTransform ();
     void projectTransform();
     void viewTransform();
-    void modelTransformY();
+    void modelTransformTerra();
 
     // attribute locations
     GLuint vertexLoc, colorLoc;
     // uniform locations
     GLuint transLoc, projLoc, viewLoc;
     // VAO i VBO names
-    GLuint VAO_homer, VBO_homer, VBO_homer2;
+    GLuint VAO_homer, VBO_homer, VBO_homer2;    // El primer VBO es para los vértices y el segundo para colores
+    GLuint VAO_terra, VBO_terra, VBO_terra2;
     // Program
     QOpenGLShaderProgram *program;
     // Viewport

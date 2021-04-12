@@ -9,5 +9,5 @@ out vec3 fcolor;
 
 void main()  {
     fcolor = color;
-    gl_Position = TG * vec4 (vertex, 1.0);
+    gl_Position = proj * view * TG * vec4 (vertex, 1.0);
 }
