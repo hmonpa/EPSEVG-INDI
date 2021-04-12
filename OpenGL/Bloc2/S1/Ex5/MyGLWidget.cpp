@@ -82,7 +82,7 @@ void MyGLWidget::modelTransformTerra()
     // Segona transformació per a que es dibuxi el terra (només matriu identitat)
       glm::mat4 transform (1.0f);
       transform = glm::translate(transform, glm::vec3(0,0,0));
-      transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
+      //transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
       glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
@@ -98,12 +98,12 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
   switch (event->key()) {
     case Qt::Key_S: { // escalar a més gran
       scale += 0.05;
-      modelTransform();
+      //modelTransform();
       break;
     }
     case Qt::Key_D: { // escalar a més petit
       scale -= 0.05;
-      modelTransform();
+      //modelTransform();
       break;
     }
     case Qt::Key_R: {
@@ -147,7 +147,7 @@ void MyGLWidget::creaBuffers ()
   glm::vec3 pos_terra[4] = {
       glm::vec3(-1.0, -1.0, -1.0),
       glm::vec3(-1.0, -1.0, 1.0),
-      glm::vec3(1.0, -1.0, 1.0),
+      glm::vec3(1.0, -1.0, -1.0),
       glm::vec3(1.0, -1.0, 1.0)
   };
   glm::vec3 col_terra[4] = {
