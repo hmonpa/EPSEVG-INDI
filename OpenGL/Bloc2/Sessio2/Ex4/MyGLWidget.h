@@ -45,7 +45,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     // uniform locations
     GLuint transLoc, projLoc, viewLoc;
     // VAO i VBO names
-    GLuint VAO_homer, VBO_homer, VBO_homer2;    // El primer VBO es para los vértices y el segundo para colores
+    GLuint VAO_patri, VBO_patri, VBO_patri2;    // El primer VBO es para los vértices y el segundo para colores
     GLuint VAO_terra, VBO_terra, VBO_terra2;
     // Program
     QOpenGLShaderProgram *program;
@@ -56,11 +56,13 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     glm::vec3 pos;
 
     Model homer;
+    Model patri;
     float rota;
 
-    float FOV, raV, alphaV, zN, zF;
+    float FOV, ra, raV, alphaV, zN, zF;
     glm::vec3 OBS, VRP, UP;
     glm::vec3 Pmin, Pmax, centre;
     float radi;
+    float dist;
 };
 

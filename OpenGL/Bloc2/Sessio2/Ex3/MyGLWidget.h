@@ -58,9 +58,10 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     Model homer;
     float rota;
 
-    float FOV, raV, alphaV, zN, zF;
+    float FOV, ra, raV, alphaV, zN, zF;
     glm::vec3 OBS, VRP, UP;
     glm::vec3 Pmin, Pmax, centre;
     float radi;
+    float dist;
 };
 

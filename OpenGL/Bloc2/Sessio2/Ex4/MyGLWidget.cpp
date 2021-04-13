@@ -27,6 +27,8 @@ void MyGLWidget::initializeGL ()
   carregaShaders();
   creaBuffers();
 
+  raV = 1.0;
+
 }
 
 void MyGLWidget::paintGL () 
@@ -52,10 +54,10 @@ void MyGLWidget::paintGL ()
   modelTransform ();
   ini_camera();
 
-  // Activem el VAO per a pintar el Homer
-  glBindVertexArray (VAO_homer);
+  // Activem el VAO per a pintar el patri
+  glBindVertexArray (VAO_patri);
   // pintem
-  glDrawArrays(GL_TRIANGLES, 0, homer.faces().size() * 3);
+  glDrawArrays(GL_TRIANGLES, 0, patri.faces().size() * 3);
 
 
   modelTransformTerra();
@@ -91,26 +93,35 @@ void MyGLWidget::resizeGL (int w, int h)
   alt = h;
 
   raV = double(ample)/double(alt);
+  ra = raV;
 
-  if (raV < 1)
+  if (raV < 1.0)
   {
-      alphaV = atan(tan(float((M_PI))/4.0)/raV);
+      FOV = 2.0 * atan(tan(float((M_PI))/4.0)/raV);
   }
-
-  FOV = 2.0 * alphaV;
   projectTransform();
+
 }
 
 void MyGLWidget::ini_camera()
 {
-    FOV = M_PI/2.0;
-    raV = 1.0;
-    zN = 0.4;
-    zF = 3.0;
+    //FOV = M_PI/2.0;
 
-    OBS = glm::vec3(0,0,1);
+    //raV = 1.0;
+    //zN = 0.4;
+    //zF = 3.0;
+
+
+    dist = 2 * radi;
+    FOV = 2 * asin(radi / dist);
+    ra = 1.0;
+    zN = radi;
+    zF = dist + radi;
+
     VRP = glm::vec3(0,0,0);
+    OBS = VRP + dist * glm::vec3(0.f, 0.f, 1.f);
     UP = glm::vec3(0,1,0);
+
 
     projectTransform();
     viewTransform();
@@ -142,27 +153,27 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
 void MyGLWidget::creaBuffers () 
 {
   // Càrrega del objecte Model
-  homer.load("/home/hector/Escritorio/INDI/OpenGL/Bloc2/models/HomerProves.obj");
+  patri.load("/home/hector/Escritorio/INDI/OpenGL/Bloc2/models/Patricio.obj");
   calculaCapsaCont();
 
   // Creació del Vertex Array Object per pintar
-  glGenVertexArrays(1, &VAO_homer);
-  glBindVertexArray(VAO_homer);
+  glGenVertexArrays(1, &VAO_patri);
+  glBindVertexArray(VAO_patri);
 
   // Construcció de dos VBOs
   // 1 - a partir del mètode VBO_vertices()
-  glGenBuffers(1, &VBO_homer);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_homer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*homer.faces().size()*3*3, homer.VBO_vertices(), GL_STATIC_DRAW);
+  glGenBuffers(1, &VBO_patri);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO_patri);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*patri.faces().size()*3*3, patri.VBO_vertices(), GL_STATIC_DRAW);
 
   // Activem l'atribut vertexLoc
   glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(vertexLoc);
 
   // 2 - a partir del mètode VBO_matdiff()
-  glGenBuffers(1, &VBO_homer2);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_homer2);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*homer.faces().size()*3*3, homer.VBO_matdiff(), GL_STATIC_DRAW);
+  glGenBuffers(1, &VBO_patri2);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO_patri2);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*patri.faces().size()*3*3, patri.VBO_matdiff(), GL_STATIC_DRAW);
 
   // Activem l'atribut colorLoc
   glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -241,29 +252,34 @@ void MyGLWidget::projectTransform(){
 }
 
 void MyGLWidget::viewTransform(){
-    glm::mat4 View = glm::lookAt(OBS, VRP, UP);
+    //glm::mat4 View = glm::lookAt(OBS, VRP, UP);
+    glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(-0, -0, -(radi*1.5)));
+    View = glm::translate(View, -VRP);
+
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &View[0][0]);
+
+
 }
 
 void MyGLWidget::calculaCapsaCont(){
     // Pmin de la capsa - inicialització
-    Pmin.x = homer.vertices()[0];
-    Pmin.y = homer.vertices()[1];
-    Pmin.z = homer.vertices()[2];
+    Pmin.x = patri.vertices()[0];
+    Pmin.y = patri.vertices()[1];
+    Pmin.z = patri.vertices()[2];
 
     // Pmax de la capsa - inicialització
-    Pmax.x = homer.vertices()[0];
-    Pmax.y = homer.vertices()[1];
-    Pmax.z = homer.vertices()[2];
+    Pmax.x = patri.vertices()[0];
+    Pmax.y = patri.vertices()[1];
+    Pmax.z = patri.vertices()[2];
 
-    int mida = homer.vertices().size();
+    int mida = patri.vertices().size();
 
     // Cerca de Pmin i Pmax
     for (int i=3; i<mida; i+=3)
     {
-        float nouX = homer.vertices()[i];
-        float nouY = homer.vertices()[i+1];
-        float nouZ = homer.vertices()[i+2];
+        float nouX = patri.vertices()[i];
+        float nouY = patri.vertices()[i+1];
+        float nouZ = patri.vertices()[i+2];
 
         // Pmin i Pmax - coordenada x
         Pmin.x = std::min(Pmin.x, nouX);
@@ -277,14 +293,20 @@ void MyGLWidget::calculaCapsaCont(){
         Pmin.z = std::min(Pmin.z, nouZ);
         Pmax.z = std::max(Pmax.z, nouZ);
     }
-    std::cout << "Capsa contenidora:" << std::endl;
-    std::cout << "Pmin: (" << Pmin.x << ", " << Pmin.y << ", " << Pmin.z << ")" << std::endl;
-    std::cout << "Pmax: (" << Pmax.x << ", " << Pmax.y << ", " << Pmax.z << ")" << std::endl << std::endl;
+  //  std::cout << "Capsa contenidora:" << std::endl;
+  //  std::cout << "Pmin: (" << Pmin.x << ", " << Pmin.y << ", " << Pmin.z << ")" << std::endl;
+  //  std::cout << "Pmax: (" << Pmax.x << ", " << Pmax.y << ", " << Pmax.z << ")" << std::endl << std::endl;
     calculaRadiCapsa();
 }
 
 void MyGLWidget::calculaRadiCapsa()
 {
+    Pmin.x = 0.0;
+    Pmin.y = 0.0;
+    Pmin.z = 0.0;
+    Pmax.x = 4.0;
+    Pmax.y = 4.0;
+    Pmax.z = 4.0;
     // Fórmula para obtener el centro de la caja
     centre = glm::vec3((Pmax.x + Pmin.x)/2, Pmin.y, (Pmax.z + Pmin.z)/2);
     float modX = pow(Pmax.x - centre.x, 2);
@@ -293,5 +315,5 @@ void MyGLWidget::calculaRadiCapsa()
 
     radi = sqrt(modX + modY + modZ);
 
-    std::cout << "Radi: " << radi << std::endl;
+   // std::cout << "Radi: " << radi << std::endl;
 }

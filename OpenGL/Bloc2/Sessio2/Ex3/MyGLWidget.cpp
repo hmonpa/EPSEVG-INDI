@@ -27,6 +27,8 @@ void MyGLWidget::initializeGL ()
   carregaShaders();
   creaBuffers();
 
+  raV = 1.0;
+
 }
 
 void MyGLWidget::paintGL () 
@@ -91,26 +93,35 @@ void MyGLWidget::resizeGL (int w, int h)
   alt = h;
 
   raV = double(ample)/double(alt);
+  ra = raV;
 
-  if (raV < 1)
+  if (raV < 1.0)
   {
-      alphaV = atan(tan(float((M_PI))/4.0)/raV);
+      FOV = 2.0 * atan(tan(float((M_PI))/4.0)/raV);
   }
-
-  FOV = 2.0 * alphaV;
   projectTransform();
+
 }
 
 void MyGLWidget::ini_camera()
 {
-    FOV = M_PI/2.0;
-    raV = 1.0;
-    zN = 0.4;
-    zF = 3.0;
+    //FOV = M_PI/2.0;
 
-    OBS = glm::vec3(0,0,1);
+    //raV = 1.0;
+    //zN = 0.4;
+    //zF = 3.0;
+
+
+    dist = 2 * radi;
+    FOV = 2 * asin(radi / dist);
+    ra = 1.0;
+    zN = radi;
+    zF = dist + radi;
+
     VRP = glm::vec3(0,0,0);
+    OBS = VRP + dist * glm::vec3(0.f, 0.f, 1.f);
     UP = glm::vec3(0,1,0);
+
 
     projectTransform();
     viewTransform();
@@ -241,8 +252,13 @@ void MyGLWidget::projectTransform(){
 }
 
 void MyGLWidget::viewTransform(){
-    glm::mat4 View = glm::lookAt(OBS, VRP, UP);
+    //glm::mat4 View = glm::lookAt(OBS, VRP, UP);
+    glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(-0, -0, -(radi*1.5)));
+    View = glm::translate(View, -VRP);
+
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &View[0][0]);
+
+
 }
 
 void MyGLWidget::calculaCapsaCont(){
@@ -277,9 +293,9 @@ void MyGLWidget::calculaCapsaCont(){
         Pmin.z = std::min(Pmin.z, nouZ);
         Pmax.z = std::max(Pmax.z, nouZ);
     }
-    std::cout << "Capsa contenidora:" << std::endl;
-    std::cout << "Pmin: (" << Pmin.x << ", " << Pmin.y << ", " << Pmin.z << ")" << std::endl;
-    std::cout << "Pmax: (" << Pmax.x << ", " << Pmax.y << ", " << Pmax.z << ")" << std::endl << std::endl;
+  //  std::cout << "Capsa contenidora:" << std::endl;
+  //  std::cout << "Pmin: (" << Pmin.x << ", " << Pmin.y << ", " << Pmin.z << ")" << std::endl;
+  //  std::cout << "Pmax: (" << Pmax.x << ", " << Pmax.y << ", " << Pmax.z << ")" << std::endl << std::endl;
     calculaRadiCapsa();
 }
 
@@ -293,5 +309,5 @@ void MyGLWidget::calculaRadiCapsa()
 
     radi = sqrt(modX + modY + modZ);
 
-    std::cout << "Radi: " << radi << std::endl;
+   // std::cout << "Radi: " << radi << std::endl;
 }
