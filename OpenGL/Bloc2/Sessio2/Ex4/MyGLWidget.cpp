@@ -26,9 +26,8 @@ void MyGLWidget::initializeGL ()
 
   carregaShaders();
   creaBuffers();
-
-  raV = 1.0;
-
+  ini_camera();
+  //raV = 1.0;
 }
 
 void MyGLWidget::paintGL () 
@@ -49,23 +48,11 @@ void MyGLWidget::paintGL ()
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
   // Carreguem la transformació de model
-  projectTransform();
-  viewTransform();
   modelTransform ();
-  ini_camera();
-
-  // Activem el VAO per a pintar el patri
-  glBindVertexArray (VAO_patri);
-  // pintem
-  glDrawArrays(GL_TRIANGLES, 0, patri.faces().size() * 3);
-
+  pintaPatri();
 
   modelTransformTerra();
-  // Activación VAO para pintar tierra
-  glBindVertexArray(VAO_terra);
-  // Pintado
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
+  pintaTerra();
   glBindVertexArray (0);
 }
 
@@ -75,17 +62,10 @@ void MyGLWidget::modelTransform ()
   glm::mat4 transform (1.0f);
   transform = glm::scale(transform, glm::vec3(scale));
   transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
+  transform = glm::translate(transform, -centre);
   glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
-void MyGLWidget::modelTransformTerra()
-{
-    // Segona transformació per a que es dibuxi el terra (només matriu identitat)
-      glm::mat4 transform (1.0f);
-      transform = glm::translate(transform, glm::vec3(0,0,0));
-      //transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
-      glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
-}
 
 void MyGLWidget::resizeGL (int w, int h) 
 {
@@ -103,29 +83,7 @@ void MyGLWidget::resizeGL (int w, int h)
 
 }
 
-void MyGLWidget::ini_camera()
-{
-    //FOV = M_PI/2.0;
 
-    //raV = 1.0;
-    //zN = 0.4;
-    //zF = 3.0;
-
-
-    dist = 2 * radi;
-    FOV = 2 * asin(radi / dist);
-    ra = 1.0;
-    zN = radi;
-    zF = dist + radi;
-
-    VRP = glm::vec3(0,0,0);
-    OBS = VRP + dist * glm::vec3(0.f, 0.f, 1.f);
-    UP = glm::vec3(0,1,0);
-
-
-    projectTransform();
-    viewTransform();
-}
 
 void MyGLWidget::keyPressEvent(QKeyEvent* event) 
 {
@@ -142,7 +100,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
       break;
     }
     case Qt::Key_R: {
-      rota += float(M_PI/4);
+      rota += float(M_PI/4.0);
       break;
     }
     default: event->ignore(); break;
@@ -155,65 +113,8 @@ void MyGLWidget::creaBuffers ()
   // Càrrega del objecte Model
   patri.load("/home/hector/Escritorio/INDI/OpenGL/Bloc2/models/Patricio.obj");
   calculaCapsaCont();
-
-  // Creació del Vertex Array Object per pintar
-  glGenVertexArrays(1, &VAO_patri);
-  glBindVertexArray(VAO_patri);
-
-  // Construcció de dos VBOs
-  // 1 - a partir del mètode VBO_vertices()
-  glGenBuffers(1, &VBO_patri);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_patri);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*patri.faces().size()*3*3, patri.VBO_vertices(), GL_STATIC_DRAW);
-
-  // Activem l'atribut vertexLoc
-  glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(vertexLoc);
-
-  // 2 - a partir del mètode VBO_matdiff()
-  glGenBuffers(1, &VBO_patri2);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_patri2);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*patri.faces().size()*3*3, patri.VBO_matdiff(), GL_STATIC_DRAW);
-
-  // Activem l'atribut colorLoc
-  glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(colorLoc);
-
-  // Primer VBO - posición | Segundo VBO - color
-  glm::vec3 pos_terra[4] = {
-      glm::vec3(-1.0, -1.0, -1.0),
-      glm::vec3(-1.0, -1.0, 1.0),
-      glm::vec3(1.0, -1.0, -1.0),
-      glm::vec3(1.0, -1.0, 1.0)
-  };
-  glm::vec3 col_terra[4] = {
-      glm::vec3(1,0,1),
-      glm::vec3(1,0,1),
-      glm::vec3(1,0,1),
-      glm::vec3(1,0,1)
-  };
-
-  glGenVertexArrays(1, &VAO_terra);
-  glBindVertexArray(VAO_terra);
-
-  glGenBuffers(1, &VBO_terra);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_terra);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(pos_terra), pos_terra, GL_STATIC_DRAW);
-
-  // Activem l'atribut vertexLoc
-  glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(vertexLoc);
-
-  glGenBuffers(1, &VBO_terra2);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_terra2);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(col_terra), col_terra, GL_STATIC_DRAW);
-
-  // Activem l'atribut colorLoc
-  glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(colorLoc);
-
-
-  glBindVertexArray (0);
+  carregaPatri();
+  glBindVertexArray(0);
 }
 
 void MyGLWidget::carregaShaders()
@@ -245,24 +146,136 @@ void MyGLWidget::carregaShaders()
 }
 
 
+
+// Funciones propias
 void MyGLWidget::projectTransform(){
     glm::mat4 Proj = glm::perspective(FOV, raV, zN, zF);
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, &Proj[0][0]);
-
 }
 
 void MyGLWidget::viewTransform(){
     //glm::mat4 View = glm::lookAt(OBS, VRP, UP);
-    glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(-0, -0, -(radi*1.5)));
+    glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -(radi*1.5)));
     View = glm::translate(View, -VRP);
-
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &View[0][0]);
+}
 
+void MyGLWidget::ini_camera()
+{
+    //FOV = M_PI/2.0;
+
+    //raV = 1.0;
+    //zN = 0.4;
+    //zF = 3.0;
+
+
+    dist = 2.0 * radi;
+    FOV = 2.0 * asin(radi / dist);
+    ra = 1.0;
+    zN = radi;
+    zF = dist + radi;
+
+    VRP = glm::vec3(0,0,0);
+    OBS = VRP + dist * glm::vec3(0.f, 0.0f, 1.f);
+    UP = glm::vec3(0,1,0);
+
+    modelTransform();
+    projectTransform();
+    viewTransform();
+}
+
+void MyGLWidget::carregaPatri(){
+    // Creació del Vertex Array Object per pintar
+    glGenVertexArrays(1, &VAO_patri);
+    glBindVertexArray(VAO_patri);
+
+    // Construcció de dos VBOs
+    // 1 - a partir del mètode VBO_vertices()
+    glGenBuffers(1, &VBO_patri);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_patri);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*patri.faces().size()*3*3, patri.VBO_vertices(), GL_STATIC_DRAW);
+
+    // Activem l'atribut vertexLoc
+    glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(vertexLoc);
+
+    // 2 - a partir del mètode VBO_matdiff()
+    glGenBuffers(1, &VBO_patri2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_patri2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*patri.faces().size()*3*3, patri.VBO_matdiff(), GL_STATIC_DRAW);
+
+    // Activem l'atribut colorLoc
+    glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(colorLoc);
+}
+
+void MyGLWidget::pintaPatri(){
+    // Activem el VAO per a pintar el patri
+    glBindVertexArray (VAO_patri);
+    // pintem
+    glDrawArrays(GL_TRIANGLES, 0, patri.faces().size() * 3);
+}
+
+void MyGLWidget::pintaTerra(){
+    // Activación VAO para pintar tierra
+    glBindVertexArray(VAO_terra);
+    // Pintado
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+void MyGLWidget::carregaTerra(){
+    // Primer VBO - posición | Segundo VBO - color
+    glm::vec3 pos_terra[4] = {
+        glm::vec3(-2.5, -2.5, -2.5),
+        glm::vec3(-2.5, -2.5, 2.5),
+        glm::vec3(2.5, -2.5, -2.5),
+        glm::vec3(2.5, -2.5, 2.5)
+    };
+    glm::vec3 col_terra[4] = {
+        glm::vec3(1,0,1),
+        glm::vec3(1,0,1),
+        glm::vec3(1,0,1),
+        glm::vec3(1,0,1)
+    };
+
+    glGenVertexArrays(1, &VAO_terra);
+    glBindVertexArray(VAO_terra);
+
+    glGenBuffers(1, &VBO_terra);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_terra);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(pos_terra), pos_terra, GL_STATIC_DRAW);
+
+    // Activem l'atribut vertexLoc
+    glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(vertexLoc);
+
+    glGenBuffers(1, &VBO_terra2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_terra2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(col_terra), col_terra, GL_STATIC_DRAW);
+
+    // Activem l'atribut colorLoc
+    glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(colorLoc);
+}
+
+void MyGLWidget::modelTransformTerra()
+{
+    // Segona transformació per a que es dibuxi el terra (només matriu identitat)
+      glm::mat4 transform (1.0f);
+      transform = glm::translate(transform, glm::vec3(0,0,0));
+      //transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
+      glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 
 }
 
 void MyGLWidget::calculaCapsaCont(){
     // Pmin de la capsa - inicialització
+        /*Pmin.x = 0.0;
+        Pmin.y = 0.0;
+        Pmin.z = 0.0;
+        Pmax.x = 4.0;
+        Pmax.y = 4.0;
+        Pmax.z = 4.0;*/
     Pmin.x = patri.vertices()[0];
     Pmin.y = patri.vertices()[1];
     Pmin.z = patri.vertices()[2];
@@ -293,20 +306,14 @@ void MyGLWidget::calculaCapsaCont(){
         Pmin.z = std::min(Pmin.z, nouZ);
         Pmax.z = std::max(Pmax.z, nouZ);
     }
-  //  std::cout << "Capsa contenidora:" << std::endl;
-  //  std::cout << "Pmin: (" << Pmin.x << ", " << Pmin.y << ", " << Pmin.z << ")" << std::endl;
-  //  std::cout << "Pmax: (" << Pmax.x << ", " << Pmax.y << ", " << Pmax.z << ")" << std::endl << std::endl;
+    std::cout << "Capsa contenidora:" << std::endl;
+    std::cout << "Pmin: (" << Pmin.x << ", " << Pmin.y << ", " << Pmin.z << ")" << std::endl;
+    std::cout << "Pmax: (" << Pmax.x << ", " << Pmax.y << ", " << Pmax.z << ")" << std::endl << std::endl;
     calculaRadiCapsa();
 }
 
 void MyGLWidget::calculaRadiCapsa()
 {
-    Pmin.x = 0.0;
-    Pmin.y = 0.0;
-    Pmin.z = 0.0;
-    Pmax.x = 4.0;
-    Pmax.y = 4.0;
-    Pmax.z = 4.0;
     // Fórmula para obtener el centro de la caja
     centre = glm::vec3((Pmax.x + Pmin.x)/2, Pmin.y, (Pmax.z + Pmin.z)/2);
     float modX = pow(Pmax.x - centre.x, 2);
@@ -314,6 +321,5 @@ void MyGLWidget::calculaRadiCapsa()
     float modZ = pow(Pmax.z - centre.z, 2);
 
     radi = sqrt(modX + modY + modZ);
-
    // std::cout << "Radi: " << radi << std::endl;
 }

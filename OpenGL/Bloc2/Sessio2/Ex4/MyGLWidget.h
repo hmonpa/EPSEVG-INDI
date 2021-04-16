@@ -36,6 +36,10 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void viewTransform();
     void modelTransformTerra();
     void ini_camera();
+    void pintaPatri();
+    void pintaTerra();
+    void carregaTerra();
+    void carregaPatri();
 
     void calculaCapsaCont();
     void calculaRadiCapsa();
