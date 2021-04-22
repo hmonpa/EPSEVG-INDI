@@ -17,20 +17,18 @@ MyGLWidget::~MyGLWidget ()
 void MyGLWidget::initializeGL ()
 {
   // Cal inicialitzar l'ús de les funcions d'OpenGL
-  initializeOpenGLFunctions();  
+  initializeOpenGLFunctions();
 
   glClearColor(0.5, 0.7, 1.0, 1.0); // defineix color de fons (d'esborrat)
-
   // Activació Z-Buffer
   glEnable(GL_DEPTH_TEST);
 
   carregaShaders();
   creaBuffers();
   ini_camera();
-  //raV = 1.0;
 }
 
-void MyGLWidget::paintGL () 
+void MyGLWidget::paintGL ()
 {
 // Aquest codi és necessari únicament per a MACs amb pantalla retina.
 #ifdef __APPLE__
@@ -43,54 +41,45 @@ void MyGLWidget::paintGL ()
 // En cas de voler canviar els paràmetres del viewport, descomenteu la crida següent i
 // useu els paràmetres que considereu (els que hi ha són els de per defecte)
 //  glViewport (0, 0, ample, alt);
-  
+
   // Esborrem el frame-buffer a la vegada que el buffer de profunditats
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
 
   projectTransform();
   viewTransform();
 
-  modelTransformTerra();
-  pintaTerra();
-
-  // Carreguem la transformació de model
+  // Transformación Patricio
   modelTransform ();
   pintaPatri();
+
+  // Transformación suelo
+  modelTransformTerra();
+  pintaTerra();
 
   glBindVertexArray (0);
 }
 
-void MyGLWidget::modelTransform () 
+void MyGLWidget::modelTransform ()
 {
   // Matriu de transformació de model
   glm::mat4 transform (1.0f);
   float h = Pmax.y - Pmin.y;
-  qDebug("alçada original %f", h);
+  float x = Pmax.x - Pmin.x;        // Variable cutre per que es vegi al centre
+  //qDebug("alçada original %f", h);
   float hDesitjada = 4;
-  transform = glm::translate(transform, glm::vec3(0,-hDesitjada/2,0));
+  transform = glm::translate(transform, glm::vec3(x,-hDesitjada/2,0));
   transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
   transform = glm::scale(transform, glm::vec3(hDesitjada/h));
   transform = glm::translate(transform, -centre);
   glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
-void MyGLWidget::modelTransformTerra()
-{
-    // Segona transformació per a que es dibuxi el terra (només matriu identitat)
-      glm::mat4 transform (1.0f);
-      //transform = glm::translate(transform, glm::vec3(0,0,0));
-      //transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
-      glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
-
-}
-
-void MyGLWidget::resizeGL (int w, int h) 
+void MyGLWidget::resizeGL (int w, int h)
 {
   ample = w;
   alt = h;
 
-  raV = double(ample)/double(alt);
+  raV = float(ample)/float(alt);
   ra = raV;
 
   if (raV < 1.0)
@@ -98,23 +87,20 @@ void MyGLWidget::resizeGL (int w, int h)
       FOV = 2.0 * atan(tan(float((M_PI))/4.0)/raV);
   }
   projectTransform();
-
 }
 
-
-
-void MyGLWidget::keyPressEvent(QKeyEvent* event) 
+void MyGLWidget::keyPressEvent(QKeyEvent* event)
 {
   makeCurrent();
   switch (event->key()) {
     case Qt::Key_S: { // escalar a més gran
       scale += 0.05;
-      //modelTransform();
+      modelTransform();
       break;
     }
     case Qt::Key_D: { // escalar a més petit
       scale -= 0.05;
-      //modelTransform();
+      modelTransform();
       break;
     }
     case Qt::Key_R: {
@@ -126,12 +112,13 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
   update();
 }
 
-void MyGLWidget::creaBuffers () 
+void MyGLWidget::creaBuffers ()
 {
   // Càrrega del objecte Model
   patri.load("/home/hector/Escritorio/INDI/OpenGL/Bloc2/models/Patricio.obj");
   calculaCapsaCont();
   carregaPatri();
+  carregaTerra();
   glBindVertexArray(0);
 }
 
@@ -163,31 +150,22 @@ void MyGLWidget::carregaShaders()
   viewLoc = glGetUniformLocation(program->programId(), "view");
 }
 
-
-
-// Funciones propias
+// Project y View
 void MyGLWidget::projectTransform(){
-    glm::mat4 Proj = glm::perspective(FOV, raV, zN, zF*2);
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, &Proj[0][0]);
+  glm::mat4 Proj=glm::perspective(FOV, raV, zN, zF);
+  glUniformMatrix4fv(projLoc, 1, GL_FALSE, &Proj[0][0]);
 }
 
 void MyGLWidget::viewTransform(){
-    glm::mat4 View = glm::lookAt(OBS, VRP, UP);
-    //glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -(radi*1.5)));
-    //View = glm::translate(View, -VRP);
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &View[0][0]);
+  glm::mat4 View = glm::lookAt(OBS,VRP,UP);
+  glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &View[0][0]);
 }
 
 void MyGLWidget::ini_camera()
 {
-    //FOV = M_PI/2.0;
-
-    //raV = 1.0;
-    //zN = 0.4;
-    //zF = 3.0;
-
     dist = 2.0 * radi;
     FOV = 2.0 * asin(radi / dist);
+    //FOV = float(M_PI/2.0);
     ra = 1.0;
     zN = radi;
     zF = dist + radi;
@@ -197,8 +175,9 @@ void MyGLWidget::ini_camera()
     glm::vec3 v = glm::vec3(0.f, 0.25f, 1.f);
     v = v / length(v);
     OBS = VRP + dist * v;
-    qDebug("OBS:%f,%f,%f", VRP.x, VRP.y, VRP.z);
+
     qDebug("OBS:%f,%f,%f", OBS.x, OBS.y, OBS.z);
+    qDebug("VRP:%f,%f,%f", VRP.x, VRP.y, VRP.z);
     UP = glm::vec3(0,1,0);
 
 }
@@ -235,13 +214,20 @@ void MyGLWidget::pintaPatri(){
     glDrawArrays(GL_TRIANGLES, 0, patri.faces().size() * 3);
 }
 
+void MyGLWidget::pintaTerra(){
+    // Activación VAO para pintar tierra
+    glBindVertexArray(VAO_terra);
+    // Pintado
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
 void MyGLWidget::carregaTerra(){
     // Primer VBO - posición | Segundo VBO - color
    glm::vec3 pos_terra[4] = {
-        glm::vec3(-2.5, -0.1, -2.5),
-        glm::vec3(-2.5, -0.1, 2.5),
-        glm::vec3(2.5,  -0.1, -2.5),
-        glm::vec3(2.5, -0.1, 2.5)
+        glm::vec3(-2.5, 0, -2.5),
+        glm::vec3(-2.5, 0, 2.5),
+        glm::vec3(2.5,  0, -2.5),
+        glm::vec3(2.5, 0, 2.5)
     };
 
     glm::vec3 col_terra[4] = {
@@ -271,24 +257,18 @@ void MyGLWidget::carregaTerra(){
     glEnableVertexAttribArray(colorLoc);
 }
 
-void MyGLWidget::pintaTerra(){
-    // Activación VAO para pintar tierra
-    glBindVertexArray(VAO_terra);
-    // Pintado
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
+void MyGLWidget::modelTransformTerra()
+{
+    // Segona transformació per a que es dibuxi el terra (només matriu identitat)
+      glm::mat4 transform (1.0f);
+      //transform = glm::translate(transform, glm::vec3(0,0,0));
+      //transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
+      glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 }
-
 
 
 void MyGLWidget::calculaCapsaCont(){
     // Pmin de la capsa - inicialització
-        /*Pmin.x = 0.0;
-        Pmin.y = 0.0;
-        Pmin.z = 0.0;
-        Pmax.x = 4.0;
-        Pmax.y = 4.0;
-        Pmax.z = 4.0;*/
     Pmin.x = patri.vertices()[0];
     Pmin.y = patri.vertices()[1];
     Pmin.z = patri.vertices()[2];
@@ -320,30 +300,31 @@ void MyGLWidget::calculaCapsaCont(){
         Pmax.z = std::max(Pmax.z, nouZ);
     }
     std::cout << "Capsa contenidora:" << std::endl;
-    std::cout << "Pmin: (" << Pmin.x << ", " << Pmin.y << ", " << Pmin.z << ")" << std::endl;
-    std::cout << "Pmax: (" << Pmax.x << ", " << Pmax.y << ", " << Pmax.z << ")" << std::endl << std::endl;
+    std::cout << "Pmin real: (" << Pmin.x << ", " << Pmin.y << ", " << Pmin.z << ")" << std::endl;
+    std::cout << "Pmax real: (" << Pmax.x << ", " << Pmax.y << ", " << Pmax.z << ")" << std::endl << std::endl;
     calculaRadiCapsa();
 }
 
 void MyGLWidget::calculaRadiCapsa()
 {
-    centre = glm::vec3((Pmax.x + Pmin.x)/2, (Pmax.y + Pmin.y)/2, (Pmax.z + Pmin.z)/2);
-    // Fórmula para obtener el centro de la caja
-    /*centre = glm::vec3((Pmax.x + Pmin.x)/2, (Pmax.y + Pmin.y)/2, (Pmax.z + Pmin.z)/2);
+    // Pmax y Pmin bien calculados
+    /*centre = glm::vec3((Pmax.x + Pmin.x)/2, (Pmax.y - Pmin.y)/2, (Pmax.z + Pmin.z)/2);
     float modX = pow(Pmax.x - centre.x, 2);
     float modY = pow(Pmax.y - centre.y, 2);
     float modZ = pow(Pmax.z - centre.z, 2);
 
     radi = sqrt(modX + modY + modZ);*/
 
-    glm::vec3 PMAX = glm::vec3(2.5, 4, 2.5 );
-    glm::vec3 PMIN = glm::vec3(-2.5, 0, -2.5 );
-    glm::vec3 centreEscena = glm::vec3((PMAX.x + PMIN.x)/2, (PMAX.y + PMIN.y)/2, (PMAX.z + PMIN.z)/2);
-        float modX = pow(PMAX.x - centreEscena.x, 2);
-        float modY = pow(PMAX.y - centreEscena.y, 2);
-        float modZ = pow(PMAX.z - centreEscena.z, 2);
+    // PMIN y PMAX hardcoder
+    glm::vec3 PMAX = glm::vec3(2.5, 4.0, 2.5);
+    glm::vec3 PMIN = glm::vec3(-2.5, 0.0, -2.5);
+    glm::vec3 centreEscena = glm::vec3((PMAX.x + PMIN.x)/2, (PMAX.y - PMIN.y)/2, (PMAX.z + PMIN.z)/2);
 
-        radi = sqrt(modX + modY + modZ);
+    float modX = pow(PMAX.x - centreEscena.x, 2);
+    float modY = pow(PMAX.y - centreEscena.y, 2);
+    float modZ = pow(PMAX.z - centreEscena.z, 2);
+    radi = sqrt(modX + modY + modZ);
 
     std::cout << "Radi: " << radi << std::endl;
 }
+

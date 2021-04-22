@@ -130,7 +130,7 @@ void MyGLWidget::creaBuffers ()
   glBindBuffer(GL_ARRAY_BUFFER, VBO_homer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*homer.faces().size()*3*3, homer.VBO_vertices(), GL_STATIC_DRAW);
 
-  // Activem l'atribut vertexLoc
+  // Activem l'atribut vertexLoca
   glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(vertexLoc);
 
