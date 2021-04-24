@@ -42,7 +42,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void carregaPatri();
 
     void calculaCapsaCont();
-    void calculaRadiCapsa();
+    void calculaRadiEscena();
 
     // attribute locations
     GLuint vertexLoc, colorLoc;
@@ -63,10 +63,16 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     Model patri;
     float rota;
 
+    // Perspectiva
     float FOV, ra, raV, alphaV, zN, zF;
+    // Ortogonal
+    float left, bottom, right, top;
+
     glm::vec3 OBS, VRP, UP;
     glm::vec3 Pmin, Pmax, PMIN, PMAX,  centre;
     float radi;
     float dist;
+    bool decideix=true;
+
 };
 
