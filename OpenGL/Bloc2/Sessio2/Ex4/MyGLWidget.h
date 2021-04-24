@@ -9,7 +9,7 @@
 
 #include "/home/hector/Escritorio/INDI/OpenGL/Bloc2/models/Model/model.h"
 
-class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core 
+class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 {
   Q_OBJECT
 
@@ -42,7 +42,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void carregaPatri();
 
     void calculaCapsaCont();
-    void calculaRadiCapsa();
+    void calculaRadiEscena();
 
     // attribute locations
     GLuint vertexLoc, colorLoc;
@@ -65,7 +65,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     float FOV, ra, raV, alphaV, zN, zF;
     glm::vec3 OBS, VRP, UP;
-    glm::vec3 Pmin, Pmax, centre;
+    glm::vec3 Pmin, Pmax, PMIN, PMAX,  centre;
     float radi;
     float dist;
 };
