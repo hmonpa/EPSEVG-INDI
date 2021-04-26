@@ -26,6 +26,7 @@ void MyGLWidget::initializeGL ()
   carregaShaders();
   creaBuffers();
   ini_camera();
+  FOVorig = 2.0 * asin(radi / dist);
 }
 
 void MyGLWidget::paintGL ()
@@ -49,7 +50,6 @@ void MyGLWidget::paintGL ()
   viewTransform();
 
   // Transformación Patricio
-  modelTransform ();
   pintaPatri();
   pintaPatri2();
   pintaPatri3();
@@ -67,20 +67,13 @@ void MyGLWidget::resizeGL (int w, int h)
   alt = h;      // alt = hw
 
   raV = float(ample)/float(alt);
-  ra = raV;
+  //ra = raV;
   //std::cout << "Relación aspecto Viewport: " << raV << std::endl;
   //std::cout << "Relación aspecto Window: " << ra << std::endl;
 
-  // Perspectiva
-  if (raV < 1.0)
-  {
-      FOV = 2.0 * atan(tan(FOV/raV));
-      projectTransform();
-  }
-  else {
-      double alphainicial = FOV/2;
-      double noualpha = (tan(alphainicial)/raV);
-  }
+
+  projectTransform();
+
   std::cout << "FOV: " << FOV << std::endl;
   // Ortogonal
   /*if (raV > 1.0 && !decideix)
@@ -130,12 +123,12 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
       break;
   }
   case Qt::Key_Z: { // Zoom-in
-      FOV -= (float)M_PI/180;
+      FOVorig -= (float)M_PI/180;
       projectTransform();
       break;
   }
   case Qt::Key_X: { // Zoom-out
-      FOV += (float)M_PI/180;
+      FOVorig += (float)M_PI/180;
       projectTransform();
       break;
   }
@@ -189,6 +182,15 @@ void MyGLWidget::carregaShaders()
 
 // Project y View
 void MyGLWidget::projectTransform(){
+    // Perspectiva
+    if (raV < 1.0)
+    {
+        FOV = 2.0 * atan(tan(0.5*FOVorig/raV));
+    }
+    else
+    {
+        FOV = FOVorig;
+    }
   // Perspectiva
   if (decideix){
       glm::mat4 Proj=glm::perspective(FOV, raV, zN, zF);
@@ -250,9 +252,8 @@ void MyGLWidget::ini_camera()
 {
     dist = 2.0 * radi;
 
-    FOV = 2.0 * asin(radi / dist);
     //FOV = float(M_PI/2.0);
-    ra = 1.0;
+    //ra = 1.0;
     zN = radi;
     zF = dist + radi;
     qDebug("R:%f", radi);
@@ -369,8 +370,8 @@ void MyGLWidget::modelTransform3 ()
     glm::mat4 transform (1.0f);
     transform = glm::translate(transform, glm::vec3(-2,0,-2));
     float h = Pmax.y - Pmin.y;
-    rota = M_PI;
-    transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
+    //rota = M_PI;
+    transform = glm::rotate(transform, rota+float(M_PI), glm::vec3(0,1,0));
     transform = glm::scale(transform, glm::vec3(1/h));
     transform = glm::translate(transform, -centre);
     glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
@@ -382,7 +383,7 @@ void MyGLWidget::modelTransform2 ()
     transform = glm::translate(transform, glm::vec3(2,0,2));
     float h = Pmax.y - Pmin.y;
 
-    //transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
+    transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
     transform = glm::scale(transform, glm::vec3(1/h));
     transform = glm::translate(transform, -centre);
     glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
@@ -394,8 +395,8 @@ void MyGLWidget::modelTransform ()
   glm::mat4 transform (1.0f);
   float h = Pmax.y - Pmin.y;
   float hDesitjada = 1;
-  rota = M_PI/2;
-  transform = glm::rotate(transform, rota, glm::vec3(0,1,0));
+  //rota = M_PI/2;
+  transform = glm::rotate(transform, rota+float(M_PI/2), glm::vec3(0,1,0));
   transform = glm::scale(transform, glm::vec3(hDesitjada/h));
   transform = glm::translate(transform, -centre);
   glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);

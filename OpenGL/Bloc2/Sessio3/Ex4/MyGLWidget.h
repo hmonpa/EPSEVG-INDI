@@ -78,6 +78,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     // Perspectiva
     float FOV, ra, raV, alphaV, zN, zF;
+    float FOVorig;
     // Ortogonal
     float left, bottom, right, top;
 
