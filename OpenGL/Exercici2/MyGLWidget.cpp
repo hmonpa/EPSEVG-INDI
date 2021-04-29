@@ -33,7 +33,8 @@ void MyGLWidget::iniEscena ()
   creaBuffersPatricio();
 
   centreEsc = glm::vec3(2,2,2);
-  radiEsc = 5;
+  //radiEsc = 5;
+  radiEsc = 27.5;                                         // CAMBIADO PARA PROBAR
   posHomer = glm::vec3(0, 1, 0);
 }
 
@@ -41,10 +42,14 @@ void MyGLWidget::iniCamera ()
 {
   angleY = angleX = 0.0;
   obs = centreEsc + glm::vec3(0, 2, 2*radiEsc);
-  vrp = centreEsc;
+  vrp = glm::vec3(centreEsc);
   up = glm::vec3(0,1,0);
+
   ra = 1.0;
-  fov = M_PI/3.0;
+  dist = radiEsc * 2.0;
+  //fov_orig = 2.0*asin(radiEsc/dist);
+  fov_orig = M_PI/3.0;
+  //fov = 2.0 * atan(tan(float((M_PI))/3.0)/ra);
   zn = radiEsc;
   zf = 3.0*radiEsc;
 
@@ -115,19 +120,20 @@ void MyGLWidget::modelTransformHomer ()
 void MyGLWidget::modelTransformPatri1()
 {
     glm::mat4 TG(1.f);
-    TG = glm::translate(TG, glm::vec3(-15,0,-15));
-    TG = glm::rotate(TG, float(M_PI/2), glm::vec3(0, 1, 0));
+    TG = glm::translate(TG, glm::vec3(15,0,15));
+    TG = glm::rotate(TG, float(M_PI/180*45), glm::vec3(0, 1, 0));
     TG = glm::scale(TG, glm::vec3(escalaPatri, escalaPatri, escalaPatri));
     TG = glm::translate(TG, -centreBasePatri);
     glUniformMatrix4fv (transLoc, 1, GL_FALSE, &TG[0][0]);
+    std::cout << "Radi utilitzat: " << radiEsc << std::endl;
 }
 
 
 void MyGLWidget::modelTransformPatri2()
 {
     glm::mat4 TG(1.f);
-    TG = glm::translate(TG, glm::vec3(15,0,15));
-    TG = glm::rotate(TG, float(M_PI/2), glm::vec3(0, 1, 0));
+    TG = glm::translate(TG, glm::vec3(-15,0,-15));
+    TG = glm::rotate(TG, float(M_PI/180*45), glm::vec3(0, 1, 0));
     TG = glm::scale(TG, glm::vec3(escalaPatri, escalaPatri, escalaPatri));
     TG = glm::translate(TG, -centreBasePatri);
     glUniformMatrix4fv (transLoc, 1, GL_FALSE, &TG[0][0]);
@@ -148,6 +154,11 @@ void MyGLWidget::modelTransformTerra ()
 
 void MyGLWidget::projectTransform () // Cal modificar aquesta funció...
 {
+  if (ra < 1.0) fov = 2.0 * atan(tan(float((M_PI))/4.0)/ra);
+  else fov = fov_orig;
+
+  //std::cout << "Ra: " << ra << std::endl;
+
   glm::mat4 Proj;  // Matriu de projecció
   Proj = glm::perspective(fov, ra, zn, zf);
   glUniformMatrix4fv (projLoc, 1, GL_FALSE, &Proj[0][0]);
@@ -155,10 +166,22 @@ void MyGLWidget::projectTransform () // Cal modificar aquesta funció...
 
 void MyGLWidget::viewTransform () // Cal modificar aquesta funció...
 {
-  glm::mat4 View;  // Matriu de posició i orientació
-
-  View = glm::lookAt(obs, vrp, up);
-  glUniformMatrix4fv (viewLoc, 1, GL_FALSE, &View[0][0]);
+   // Matriu de posició i orientació
+  if(canvicamera){
+      glm::mat4 View;
+      obs = glm::vec3(0,40,0);
+      vrp = glm::vec3(0,0,0);
+      up = glm::vec3(-1,0,0);
+      View = glm::lookAt(obs, vrp, up);
+  }
+  else
+  {
+      glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0., 0., -dist));
+      View = glm::rotate(View, tetha, glm::vec3(1,0,0));
+      View = glm::rotate(View, -phi, glm::vec3(0,1,0));
+      View = glm::translate(View, -vrp);
+      glUniformMatrix4fv (viewLoc, 1, GL_FALSE, &View[0][0]);
+  }
 }
 
 void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funció...
@@ -167,7 +190,13 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
   switch (event->key()) {
 	case Qt::Key_I: {
 	  break;
-	}
+    }
+    case Qt::Key_C: {
+        canvicamera=!canvicamera;
+        //projectTransform();
+        viewTransform();
+        break;
+    }
     default: event->ignore(); break;
   }
 
@@ -196,7 +225,14 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *e)
   makeCurrent();
   if (DoingInteractive == ROTATE)
   {
-    // Aquí cal completar per fer la rotació...
+    float angleX = e->x();
+    float angleY = e->y();
+
+    float x = angleX - xClick;
+    float y = angleY - yClick;
+
+    phi += (x/width())*10;
+    tetha += (y/height())*10;
 
     viewTransform ();
   }
@@ -234,12 +270,19 @@ void MyGLWidget::calculaCapsaModel (Model &p, float &escala, glm::vec3 &centreBa
   centreBase[1] = miny; 
   centreBase[2] = (minz+maxz)/2.0;
 
-  std::cout << "Capsa contenidora real:" << std::endl;
-  std::cout << "Pmin real: (" << minx << ", " << miny << ", " << minz << ")" << std::endl;
-  std::cout << "Pmax real: (" << maxx << ", " << maxy << ", " << maxz << ")" << std::endl << std::endl;
-  //centreBasePatri=centreBase;
+  //std::cout << "Capsa contenidora real:" << std::endl;
+  //std::cout << "Pmin real: (" << minx << ", " << miny << ", " << minz << ")" << std::endl;
+  //std::cout << "Pmax real: (" << maxx << ", " << maxy << ", " << maxz << ")" << std::endl << std::endl;
 
+  // PRUEBAS
+  glm::vec3 centre = glm::vec3((maxx + minx)/2, miny, (maxz+minz)/2);
+  float modX = pow(maxx - centre.x, 2);
+  float modY = pow(maxy - centre.y, 2);
+  float modZ = pow(maxz - centre.z, 2);
 
+  radiEsc = sqrt(modX + modY + modZ);
+  std::cout << "radi original model: " << radiEsc << std::endl;
+/*
   glm::vec3 PMAX = glm::vec3(2.5, 4.0, 2.5);
   glm::vec3 PMIN = glm::vec3(-2.5, 0.0, -2.5);
   glm::vec3 centreEsc = glm::vec3((PMAX.x + PMIN.x)/2, (PMAX.y + PMIN.y)/2, (PMAX.z + PMIN.z)/2);
@@ -249,11 +292,11 @@ void MyGLWidget::calculaCapsaModel (Model &p, float &escala, glm::vec3 &centreBa
   float modY = pow(PMAX.y - centreEsc.y, 2);
   float modZ = pow(PMAX.z - centreEsc.z, 2);
   radiEsc = sqrt(modX + modY + modZ);
-
+*/
   //escalaPatri = glm::vec3(escala);
   //centreBasePatri = PMIN;
 
-  std::cout << "Centre base Patricio: " << centreBasePatri.x << "," << centreBasePatri.y << "," << centreBasePatri.z << std::endl;
+  //std::cout << "Centre base Patricio: " << centreBasePatri.x << "," << centreBasePatri.y << "," << centreBasePatri.z << std::endl;*/
 }
 
 void MyGLWidget::creaBuffersCub ()

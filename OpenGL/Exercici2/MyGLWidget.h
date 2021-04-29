@@ -51,6 +51,8 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void modelTransformPatri1();
     void modelTransformPatri2();
 
+
+
     // VAO names
     GLuint VAO_Cub, VAO_Terra, VAO_Homer;
     GLuint VAO_Patri;
@@ -75,11 +77,17 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     glm::vec3 centreEsc, obs, vrp, up;
     float radiEsc, ra, fov, zn, zf;
-    
+    float fov_orig;
+    float dist;
     float angleX, angleY;
 
     typedef  enum {NONE, ROTATE} InteractiveAction;
     InteractiveAction DoingInteractive;
     int xClick, yClick;
+
+    float antigaX, antigaY;
+    float tetha = M_PI/9.0, phi = M_PI/9.0;
+
+    bool canvicamera = false;
 };
 
