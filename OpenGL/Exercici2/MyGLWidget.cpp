@@ -32,18 +32,24 @@ void MyGLWidget::iniEscena ()
   //creaBuffersHomer();
   creaBuffersPatricio();
 
-  centreEsc = glm::vec3(2,2,2);
+  centreEsc = glm::vec3(0,0,0);
   //radiEsc = 5;
-  radiEsc = 27.5;                                         // CAMBIADO PARA PROBAR
+  radiEsc = 28;                                         // CAMBIADO PARA PROBAR
   posHomer = glm::vec3(0, 1, 0);
 }
 
 void MyGLWidget::iniCamera ()
 {
   angleY = angleX = 0.0;
+
+  // Estat inicial
   obs = centreEsc + glm::vec3(0, 2, 2*radiEsc);
   vrp = glm::vec3(centreEsc);
   up = glm::vec3(0,1,0);
+
+  tetha = M_PI/9.0;
+  phi = M_PI/9.0;
+  canvicamera=false;
 
   ra = 1.0;
   dist = radiEsc * 2.0;
@@ -93,6 +99,7 @@ void MyGLWidget::paintGL ()
   // Visualització primer Patricio
   modelTransformPatri1();
   glDrawArrays(GL_TRIANGLES, 0, patri.faces().size()*3);
+
   // Visualització segon Patricio
   modelTransformPatri2();
   glDrawArrays(GL_TRIANGLES, 0, patri.faces().size()*3);
@@ -121,11 +128,10 @@ void MyGLWidget::modelTransformPatri1()
 {
     glm::mat4 TG(1.f);
     TG = glm::translate(TG, glm::vec3(15,0,15));
-    TG = glm::rotate(TG, float(M_PI/180*45), glm::vec3(0, 1, 0));
+    TG = glm::rotate(TG, rotacio1, glm::vec3(0, 1, 0));
     TG = glm::scale(TG, glm::vec3(escalaPatri, escalaPatri, escalaPatri));
     TG = glm::translate(TG, -centreBasePatri);
     glUniformMatrix4fv (transLoc, 1, GL_FALSE, &TG[0][0]);
-    std::cout << "Radi utilitzat: " << radiEsc << std::endl;
 }
 
 
@@ -133,7 +139,7 @@ void MyGLWidget::modelTransformPatri2()
 {
     glm::mat4 TG(1.f);
     TG = glm::translate(TG, glm::vec3(-15,0,-15));
-    TG = glm::rotate(TG, float(M_PI/180*45), glm::vec3(0, 1, 0));
+    TG = glm::rotate(TG, rotacio2, glm::vec3(0, 1, 0));
     TG = glm::scale(TG, glm::vec3(escalaPatri, escalaPatri, escalaPatri));
     TG = glm::translate(TG, -centreBasePatri);
     glUniformMatrix4fv (transLoc, 1, GL_FALSE, &TG[0][0]);
@@ -158,7 +164,6 @@ void MyGLWidget::projectTransform () // Cal modificar aquesta funció...
   else fov = fov_orig;
 
   //std::cout << "Ra: " << ra << std::endl;
-
   glm::mat4 Proj;  // Matriu de projecció
   Proj = glm::perspective(fov, ra, zn, zf);
   glUniformMatrix4fv (projLoc, 1, GL_FALSE, &Proj[0][0]);
@@ -168,11 +173,12 @@ void MyGLWidget::viewTransform () // Cal modificar aquesta funció...
 {
    // Matriu de posició i orientació
   if(canvicamera){
-      glm::mat4 View;
       obs = glm::vec3(0,40,0);
-      vrp = glm::vec3(0,0,0);
+      vrp = glm::vec3(centreEsc);
       up = glm::vec3(-1,0,0);
+      glm::mat4 View;
       View = glm::lookAt(obs, vrp, up);
+      glUniformMatrix4fv (viewLoc, 1, GL_FALSE, &View[0][0]);
   }
   else
   {
@@ -189,17 +195,26 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
   makeCurrent();
   switch (event->key()) {
 	case Qt::Key_I: {
+      iniCamera();
 	  break;
     }
     case Qt::Key_C: {
         canvicamera=!canvicamera;
-        //projectTransform();
-        viewTransform();
+        break;
+    }
+    case Qt::Key_R: {
+        rotacio1 -= float(M_PI/6);
+        modelTransformPatri1();
+        break;
+    }
+    case Qt::Key_T: {
+        rotacio2 += float(M_PI/6);
+        modelTransformPatri2();
         break;
     }
     default: event->ignore(); break;
   }
-
+  viewTransform();
   update();
 }
 
@@ -491,3 +506,10 @@ void MyGLWidget::carregaShaders()
   viewLoc = glGetUniformLocation (program->programId(), "view");
 }
 
+void MyGLWidget::torna_inici()
+{
+    makeCurrent();
+    carregaShaders();
+    iniCamera();
+    update();
+}

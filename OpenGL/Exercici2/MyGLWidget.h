@@ -80,14 +80,18 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     float fov_orig;
     float dist;
     float angleX, angleY;
+    float rotacio1 = M_PI/180*45, rotacio2 = M_PI/180*45;
 
     typedef  enum {NONE, ROTATE} InteractiveAction;
     InteractiveAction DoingInteractive;
     int xClick, yClick;
 
     float antigaX, antigaY;
-    float tetha = M_PI/9.0, phi = M_PI/9.0;
+    float tetha, phi;
 
-    bool canvicamera = false;
+    bool canvicamera;
+
+public slots:
+    void torna_inici();
 };
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>819</width>
+    <width>765</width>
     <height>726</height>
    </rect>
   </property>
@@ -27,6 +27,16 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
+      <widget class="QPushButton" name="botoInici">
+       <property name="text">
+        <string>Inici</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDial" name="dial"/>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -34,7 +44,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>40</height>
+         <height>20</height>
         </size>
        </property>
       </spacer>
@@ -62,6 +72,9 @@
    <extends>QWidget</extends>
    <header>MyGLWidget.h</header>
    <container>1</container>
+   <slots>
+    <slot>torna_inici()</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -73,12 +86,28 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>796</x>
-     <y>596</y>
+     <x>754</x>
+     <y>715</y>
     </hint>
     <hint type="destinationlabel">
-     <x>839</x>
+     <x>764</x>
      <y>529</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>botoInici</sender>
+   <signal>clicked()</signal>
+   <receiver>widget</receiver>
+   <slot>torna_inici()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>671</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>601</y>
     </hint>
    </hints>
   </connection>
