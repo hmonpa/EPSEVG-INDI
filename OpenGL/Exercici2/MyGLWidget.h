@@ -93,5 +93,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
 public slots:
     void torna_inici();
+    void giraPatri1();
+    void giraPatri2();
 };
 

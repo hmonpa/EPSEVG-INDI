@@ -509,7 +509,22 @@ void MyGLWidget::carregaShaders()
 void MyGLWidget::torna_inici()
 {
     makeCurrent();
-    carregaShaders();
     iniCamera();
+    update();
+}
+
+void MyGLWidget::giraPatri1()
+{
+    makeCurrent();
+    rotacio1 -= float(M_PI/6);
+    modelTransformPatri1();
+    update();
+}
+
+void MyGLWidget::giraPatri2()
+{
+    makeCurrent();
+    rotacio2 += float(M_PI/6);
+    modelTransformPatri2();
     update();
 }

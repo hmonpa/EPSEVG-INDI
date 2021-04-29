@@ -31,10 +31,59 @@
        <property name="text">
         <string>Inici</string>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QDial" name="dial"/>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Gira Patricio1</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDial" name="GiraPatri1"/>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Gira Patricio 2</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDial" name="GiraPatri2"/>
      </item>
      <item>
       <spacer name="verticalSpacer">
@@ -74,6 +123,8 @@
    <container>1</container>
    <slots>
     <slot>torna_inici()</slot>
+    <slot>giraPatri1()</slot>
+    <slot>giraPatri2()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -86,7 +137,7 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>754</x>
+     <x>739</x>
      <y>715</y>
     </hint>
     <hint type="destinationlabel">
@@ -102,12 +153,44 @@
    <slot>torna_inici()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>671</y>
+     <x>754</x>
+     <y>29</y>
     </hint>
     <hint type="destinationlabel">
      <x>214</x>
      <y>601</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GiraPatri1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widget</receiver>
+   <slot>giraPatri1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>705</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>518</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GiraPatri2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widget</receiver>
+   <slot>giraPatri2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>721</x>
+     <y>242</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>570</x>
+     <y>227</y>
     </hint>
    </hints>
   </connection>
