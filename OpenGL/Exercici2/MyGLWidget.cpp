@@ -32,22 +32,17 @@ void MyGLWidget::iniEscena ()
   //creaBuffersHomer();
   creaBuffersPatricio();
 
-  centreEsc = glm::vec3(0,0,0);
-  //radiEsc = 5;
+  //centreEsc = glm::vec3(0,0,0);
 
   // Càlcul radi Escena
-  /*  Pmax.x = 20, Pmax.y = 4, Pmax.z = 20
-  Pmin.x = -20, Pmin.y = 0, Pmin.z = -20
-  centreEsc = Pmax.x+Pmin.x/2, Pmax.y+Pmin.y/2, Pmax.z+Pmin.z/2
+  calculaRadiEsc();
 
-  modX = (Pmax.x - centreEsc.x)^2 = 400
-  modY = (Pmax.y - centreEsc.y)^2 = 16
-  modZ = (Pmax.z - centreEsc.z)^2 = 400
+  // Càlcul centre Escena
+  calculaCentreEsc();
 
-  radi = sqrt (modX + modY + modZ) = 28.56*/
-
-  radiEsc = 28.56;
-  posHomer = glm::vec3(0, 1, 0);
+  std::cout << "Radi calculat: " << radiEsc << std::endl;
+  std::cout << "Centre escena: " << centreEsc.x << "," << centreEsc.y << "," << centreEsc.z << std::endl;
+  //posHomer = glm::vec3(0, 1, 0);
 }
 
 void MyGLWidget::iniCamera ()
@@ -61,15 +56,20 @@ void MyGLWidget::iniCamera ()
 
   tetha = M_PI/9.0;
   phi = M_PI/9.0;
+
   canvicamera=false;
 
-  ra = 1.0;
   dist = radiEsc * 2.0;
-  fov_orig = 2.0*asin(radiEsc/dist);
-  rotacio1 = M_PI/180*45;
-  rotacio2 = M_PI/180*45;
+  fov_orig = 2.0*asin(radiEsc/dist);    // 60 graus
+
   zn = radiEsc;
   zf = 3.0*radiEsc;
+
+  if (ra < 1.0) fov = 2.0 * atan(tan(0.5*fov_orig/ra));
+  else fov = fov_orig;
+
+  rotacio1 = M_PI/180*45;
+  rotacio2 = M_PI/180*45;
 
   projectTransform ();
   viewTransform ();
@@ -186,6 +186,7 @@ void MyGLWidget::viewTransform () // Cal modificar aquesta funció...
 {
    // Matriu de posició i orientació
   if(canvicamera){
+      std::cout << "FOV segona càmera: " << fov_orig << std::endl;
       obs = glm::vec3(0,40,0);
       vrp = glm::vec3(centreEsc);
       up = glm::vec3(-1,0,0);
@@ -251,7 +252,7 @@ void MyGLWidget::mouseReleaseEvent( QMouseEvent *)
 void MyGLWidget::mouseMoveEvent(QMouseEvent *e)
 {
   makeCurrent();
-  if (DoingInteractive == ROTATE)
+  if (DoingInteractive == ROTATE && !canvicamera)
   {
     float angleX = e->x();
     float angleY = e->y();
@@ -297,34 +298,40 @@ void MyGLWidget::calculaCapsaModel (Model &p, float &escala, glm::vec3 &centreBa
   centreBase[0] = (minx+maxx)/2.0; 
   centreBase[1] = miny; 
   centreBase[2] = (minz+maxz)/2.0;
+}
 
-  //std::cout << "Capsa contenidora real:" << std::endl;
-  //std::cout << "Pmin real: (" << minx << ", " << miny << ", " << minz << ")" << std::endl;
-  //std::cout << "Pmax real: (" << maxx << ", " << maxy << ", " << maxz << ")" << std::endl << std::endl;
+void MyGLWidget::calculaRadiEsc()
+{
+    glm::vec3 Pmax;
+    glm::vec3 Pmin;
+    float modX, modY, modZ;
+    Pmax.x = 20, Pmax.y = 4, Pmax.z = 20;
+    Pmin.x = -20, Pmin.y = 0, Pmin.z = -20;
 
-  // PRUEBAS
-  glm::vec3 centre = glm::vec3((maxx + minx)/2, miny, (maxz+minz)/2);
-  float modX = pow(maxx - centre.x, 2);
-  float modY = pow(maxy - centre.y, 2);
-  float modZ = pow(maxz - centre.z, 2);
+    centreEsc[0] = (Pmax.x+Pmin.x)/2;
+    centreEsc[1] = (Pmax.y+Pmin.y)/2;
+    centreEsc[2] = (Pmax.z+Pmin.z)/2;
 
-  radiEsc = sqrt(modX + modY + modZ);
-  std::cout << "radi original model: " << radiEsc << std::endl;
-/*
-  glm::vec3 PMAX = glm::vec3(2.5, 4.0, 2.5);
-  glm::vec3 PMIN = glm::vec3(-2.5, 0.0, -2.5);
-  glm::vec3 centreEsc = glm::vec3((PMAX.x + PMIN.x)/2, (PMAX.y + PMIN.y)/2, (PMAX.z + PMIN.z)/2);
+    modX = pow(Pmax.x - centreEsc.x, 2);
+    modY = pow(Pmax.y - centreEsc.y, 2);
+    modZ = pow(Pmax.z - centreEsc.z, 2);
 
-  std::cout << "Centre caixa Patricio: " << centreEsc.x << "," << centreEsc.y << "," << centreEsc.z << std::endl;
-  float modX = pow(PMAX.x - centreEsc.x, 2);
-  float modY = pow(PMAX.y - centreEsc.y, 2);
-  float modZ = pow(PMAX.z - centreEsc.z, 2);
-  radiEsc = sqrt(modX + modY + modZ);
-*/
-  //escalaPatri = glm::vec3(escala);
-  //centreBasePatri = PMIN;
+    radiEsc = sqrt(modX + modY + modZ);
+}
 
-  //std::cout << "Centre base Patricio: " << centreBasePatri.x << "," << centreBasePatri.y << "," << centreBasePatri.z << std::endl;*/
+void MyGLWidget::calculaCentreEsc()
+{
+    /* Pmax.x = 20, Pmax.y = 4, Pmax.z = 20
+    Pmin.x = -20, Pmin.y = 0, Pmin.z = -20
+    centreEsc = Pmax.x+Pmin.x/2, Pmin.y, Pmax.z+Pmin.z/2 = (0,0,0) */
+    glm::vec3 Pmax;
+    glm::vec3 Pmin;
+    Pmax.x = 20, Pmax.y = 4, Pmax.z = 20;
+    Pmin.x = -20, Pmin.y = 0, Pmin.z = -20;
+
+    centreEsc[0] = (Pmax.x+Pmin.x)/2;
+    centreEsc[1] = Pmin.y;
+    centreEsc[2] = (Pmax.z+Pmin.z)/2;
 }
 
 void MyGLWidget::creaBuffersCub ()
@@ -539,5 +546,13 @@ void MyGLWidget::giraPatri2()
     makeCurrent();
     rotacio2 += float(M_PI/6);
     modelTransformPatri2();
+    update();
+}
+
+void MyGLWidget::canvi_cam()
+{
+    makeCurrent();
+    canvicamera=!canvicamera;
+    viewTransform();
     update();
 }

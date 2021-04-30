@@ -27,9 +27,33 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QLabel" name="Opcions">
        <property name="text">
-        <string>Inici</string>
+        <string>Opcions:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="botoInici">
+       <property name="font">
+        <font>
+         <pointsize>7</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Torna a l'inici</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="botoCamera">
+       <property name="font">
+        <font>
+         <pointsize>7</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Canvia Càmera</string>
        </property>
       </widget>
      </item>
@@ -47,14 +71,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="GiraPatri1">
        <property name="text">
         <string>Gira Patri1</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDial" name="dial"/>
+      <widget class="QDial" name="dialPatri1"/>
      </item>
      <item>
       <spacer name="verticalSpacer_3">
@@ -70,14 +94,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="GiraPatri2">
        <property name="text">
         <string>Gira Patri2</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDial" name="dial_2"/>
+      <widget class="QDial" name="dialPatri2"/>
      </item>
      <item>
       <spacer name="verticalSpacer">
@@ -93,7 +117,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="botoSortir">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -119,13 +143,14 @@
     <slot>torna_inici()</slot>
     <slot>giraPatri1()</slot>
     <slot>giraPatri2()</slot>
+    <slot>canvi_cam()</slot>
    </slots>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton</sender>
+   <sender>botoSortir</sender>
    <signal>clicked()</signal>
    <receiver>MyForm</receiver>
    <slot>close()</slot>
@@ -141,7 +166,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_2</sender>
+   <sender>botoInici</sender>
    <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>torna_inici()</slot>
@@ -157,7 +182,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>dial</sender>
+   <sender>dialPatri1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>widget</receiver>
    <slot>giraPatri1()</slot>
@@ -173,7 +198,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>dial_2</sender>
+   <sender>dialPatri2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>widget</receiver>
    <slot>giraPatri2()</slot>
@@ -185,6 +210,22 @@
     <hint type="destinationlabel">
      <x>613</x>
      <y>450</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>botoCamera</sender>
+   <signal>clicked()</signal>
+   <receiver>widget</receiver>
+   <slot>canvi_cam()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>795</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>577</x>
+     <y>97</y>
     </hint>
    </hints>
   </connection>
