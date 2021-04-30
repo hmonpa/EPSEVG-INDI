@@ -23,6 +23,10 @@ void MyGLWidget::initializeGL ()
   carregaShaders();
   iniEscena ();
   iniCamera ();
+  patriX1=15.0;
+  patriZ1=15.0;
+  patriX2=-15.0;
+  patriZ2=-15.0;
 }
 
 void MyGLWidget::iniEscena ()
@@ -139,7 +143,7 @@ void MyGLWidget::modelTransformHomer ()
 void MyGLWidget::modelTransformPatri1()
 {
     glm::mat4 TG(1.f);
-    TG = glm::translate(TG, glm::vec3(15,0,15));
+    TG = glm::translate(TG, glm::vec3(patriX1,0,patriZ1));
     TG = glm::rotate(TG, rotacio1, glm::vec3(0, 1, 0));
     TG = glm::scale(TG, glm::vec3(escalaPatri, escalaPatri, escalaPatri));
     TG = glm::translate(TG, -centreBasePatri);
@@ -150,7 +154,7 @@ void MyGLWidget::modelTransformPatri1()
 void MyGLWidget::modelTransformPatri2()
 {
     glm::mat4 TG(1.f);
-    TG = glm::translate(TG, glm::vec3(-15,0,-15));
+    TG = glm::translate(TG, glm::vec3(patriX2,0,patriZ2));
     TG = glm::rotate(TG, rotacio2, glm::vec3(0, 1, 0));
     TG = glm::scale(TG, glm::vec3(escalaPatri, escalaPatri, escalaPatri));
     TG = glm::translate(TG, -centreBasePatri);
@@ -186,7 +190,7 @@ void MyGLWidget::viewTransform () // Cal modificar aquesta funció...
 {
    // Matriu de posició i orientació
   if(canvicamera){
-      std::cout << "FOV segona càmera: " << fov_orig << std::endl;
+      //std::cout << "FOV segona càmera: " << fov_orig << std::endl;
       obs = glm::vec3(0,40,0);
       vrp = glm::vec3(centreEsc);
       up = glm::vec3(-1,0,0);
@@ -216,14 +220,39 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
         canvicamera=!canvicamera;
         break;
     }
-    case Qt::Key_R: {
-        rotacio1 -= float(M_PI/6);
-        modelTransformPatri1();
+    case Qt::Key_R: {   // Patricio 1
+        giraPatri1();
         break;
     }
-    case Qt::Key_T: {
-        rotacio2 += float(M_PI/6);
-        modelTransformPatri2();
+    case Qt::Key_T: {   // Patricio 2
+      if (patriZ2 >= -15 and patriX2 < 15.0)
+      {
+          patriZ2=patriZ2+(1.66*2);
+          if (patriZ2>-11.5) patriX2+=1.66;
+          else if (patriZ2>-8) patriX2-=1.66;
+      }
+      /*else if (patriX2 <= 5.1 and patriZ2 >= 5.1)
+      {
+          patriZ2=patriZ2-(1.66*2);
+          if (patriZ2>11.5) patriX2-=1.66;
+          else if (patriZ2<8) patriX2+=1.66;
+      }
+      else if (patriX2 < 15.0 and patriZ2 <= 5.1)
+      {
+          patriX2=patriX2+(1.66*2);
+          if (patriX2>12) patriZ2+=1.66;
+          else if (patriX2<9) patriZ2-=1.66;
+      }
+      else if (patriX2 >= 15.0 and patriZ2 < 15)
+      {
+          patriZ2=patriZ2+(1.66*2);
+          if (patriZ2<9) patriX2+=1.66;
+          else if (patriZ2>12) patriX2-=1.66;
+      }*/
+      std::cout << "X" << patriX2 << std::endl;
+      std::cout << "Z" << patriZ2 << std::endl << std::endl;
+      rotacio2 += float(M_PI/6);
+      modelTransformPatri2();
         break;
     }
     default: event->ignore(); break;
@@ -536,6 +565,31 @@ void MyGLWidget::torna_inici()
 void MyGLWidget::giraPatri1()
 {
     makeCurrent();
+    if (patriX1 > 5.1 and patriZ1 >= 15.0)
+    {
+        patriX1=patriX1-(1.66*2);
+        if (patriX1>11.5) patriZ1+=1.66;
+        else if (patriX1<8) patriZ1-=1.66;
+    }
+    else if (patriX1 <= 5.1 and patriZ1 >= 5.1)
+    {
+        patriZ1=patriZ1-(1.66*2);
+        if (patriZ1>11.5) patriX1-=1.66;
+        else if (patriZ1<8) patriX1+=1.66;
+    }
+    else if (patriX1 < 15.0 and patriZ1 <= 5.1)
+    {
+        patriX1=patriX1+(1.66*2);
+        if (patriX1>12) patriZ1+=1.66;
+        else if (patriX1<9) patriZ1-=1.66;
+    }
+    else if (patriX1 >= 15.0 and patriZ1 < 15)
+    {
+        patriZ1=patriZ1+(1.66*2);
+        if (patriZ1<9) patriX1+=1.66;
+        else if (patriZ1>12) patriX1-=1.66;
+    }
+
     rotacio1 -= float(M_PI/6);
     modelTransformPatri1();
     update();

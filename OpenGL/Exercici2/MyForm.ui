@@ -78,7 +78,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QDial" name="dialPatri1"/>
+      <widget class="QDial" name="dialPatri1">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="verticalSpacer_3">

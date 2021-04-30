@@ -92,6 +92,8 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     bool canvicamera;
 
+    float patriX1, patriZ1, patriX2, patriZ2;
+
 public slots:
     void torna_inici();
     void giraPatri1();
