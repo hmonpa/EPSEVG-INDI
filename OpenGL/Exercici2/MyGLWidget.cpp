@@ -34,7 +34,19 @@ void MyGLWidget::iniEscena ()
 
   centreEsc = glm::vec3(0,0,0);
   //radiEsc = 5;
-  radiEsc = 28;                                         // CAMBIADO PARA PROBAR
+
+  // Càlcul radi Escena
+  /*  Pmax.x = 20, Pmax.y = 4, Pmax.z = 20
+  Pmin.x = -20, Pmin.y = 0, Pmin.z = -20
+  centreEsc = Pmax.x+Pmin.x/2, Pmax.y+Pmin.y/2, Pmax.z+Pmin.z/2
+
+  modX = (Pmax.x - centreEsc.x)^2 = 400
+  modY = (Pmax.y - centreEsc.y)^2 = 16
+  modZ = (Pmax.z - centreEsc.z)^2 = 400
+
+  radi = sqrt (modX + modY + modZ) = 28.56*/
+
+  radiEsc = 28.56;
   posHomer = glm::vec3(0, 1, 0);
 }
 
@@ -53,9 +65,9 @@ void MyGLWidget::iniCamera ()
 
   ra = 1.0;
   dist = radiEsc * 2.0;
-  //fov_orig = 2.0*asin(radiEsc/dist);
-  fov_orig = M_PI/3.0;
-  //fov = 2.0 * atan(tan(float((M_PI))/3.0)/ra);
+  fov_orig = 2.0*asin(radiEsc/dist);
+  rotacio1 = M_PI/180*45;
+  rotacio2 = M_PI/180*45;
   zn = radiEsc;
   zf = 3.0*radiEsc;
 
@@ -160,10 +172,11 @@ void MyGLWidget::modelTransformTerra ()
 
 void MyGLWidget::projectTransform () // Cal modificar aquesta funció...
 {
-  if (ra < 1.0) fov = 2.0 * atan(tan(float((M_PI))/4.0)/ra);
+  if (ra < 1.0) fov = 2.0 * atan(tan(0.5*fov_orig/ra));
   else fov = fov_orig;
 
   //std::cout << "Ra: " << ra << std::endl;
+
   glm::mat4 Proj;  // Matriu de projecció
   Proj = glm::perspective(fov, ra, zn, zf);
   glUniformMatrix4fv (projLoc, 1, GL_FALSE, &Proj[0][0]);

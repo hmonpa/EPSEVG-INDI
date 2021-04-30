@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>765</width>
+    <width>819</width>
     <height>726</height>
    </rect>
   </property>
@@ -27,15 +27,9 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="botoInici">
+      <widget class="QPushButton" name="pushButton_2">
        <property name="text">
         <string>Inici</string>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
        </property>
       </widget>
      </item>
@@ -55,12 +49,12 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Gira Patricio1</string>
+        <string>Gira Patri1</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDial" name="GiraPatri1"/>
+      <widget class="QDial" name="dial"/>
      </item>
      <item>
       <spacer name="verticalSpacer_3">
@@ -78,12 +72,12 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Gira Patricio 2</string>
+        <string>Gira Patri2</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDial" name="GiraPatri2"/>
+      <widget class="QDial" name="dial_2"/>
      </item>
      <item>
       <spacer name="verticalSpacer">
@@ -93,7 +87,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>20</height>
+         <height>40</height>
         </size>
        </property>
       </spacer>
@@ -137,60 +131,60 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>808</x>
      <y>715</y>
     </hint>
     <hint type="destinationlabel">
-     <x>764</x>
+     <x>839</x>
      <y>529</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>botoInici</sender>
+   <sender>pushButton_2</sender>
    <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>torna_inici()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>754</x>
-     <y>29</y>
+     <x>777</x>
+     <y>25</y>
     </hint>
     <hint type="destinationlabel">
-     <x>214</x>
-     <y>601</y>
+     <x>466</x>
+     <y>139</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>GiraPatri1</sender>
+   <sender>dial</sender>
    <signal>valueChanged(int)</signal>
    <receiver>widget</receiver>
    <slot>giraPatri1()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>705</x>
-     <y>124</y>
+     <x>765</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel">
-     <x>518</x>
-     <y>125</y>
+     <x>625</x>
+     <y>246</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>GiraPatri2</sender>
+   <sender>dial_2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>widget</receiver>
    <slot>giraPatri2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>721</x>
-     <y>242</y>
+     <x>760</x>
+     <y>517</y>
     </hint>
     <hint type="destinationlabel">
-     <x>570</x>
-     <y>227</y>
+     <x>613</x>
+     <y>450</y>
     </hint>
    </hints>
   </connection>
