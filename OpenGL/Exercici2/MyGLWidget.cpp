@@ -23,10 +23,6 @@ void MyGLWidget::initializeGL ()
   carregaShaders();
   iniEscena ();
   iniCamera ();
-  patriX1=15.0;
-  patriZ1=15.0;
-  patriX2=-15.0;
-  patriZ2=-15.0;
 }
 
 void MyGLWidget::iniEscena ()
@@ -43,6 +39,11 @@ void MyGLWidget::iniEscena ()
 
   // Càlcul centre Escena
   calculaCentreEsc();
+
+  patriX1=15.0;
+  patriZ1=15.0;
+  patriX2=-15.0;
+  patriZ2=-15.0;
 
   std::cout << "Radi calculat: " << radiEsc << std::endl;
   std::cout << "Centre escena: " << centreEsc.x << "," << centreEsc.y << "," << centreEsc.z << std::endl;
@@ -61,7 +62,7 @@ void MyGLWidget::iniCamera ()
   tetha = M_PI/9.0;
   phi = M_PI/9.0;
 
-  canvicamera=false;
+  canvicamera=false;                    // Per defecte false = Estat inicial escena
 
   dist = radiEsc * 2.0;
   fov_orig = 2.0*asin(radiEsc/dist);    // 60 graus
@@ -217,7 +218,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
 	  break;
     }
     case Qt::Key_C: {
-        canvicamera=!canvicamera;
+        canvi_cam();
         break;
     }
     case Qt::Key_R: {   // Patricio 1
@@ -225,39 +226,12 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
         break;
     }
     case Qt::Key_T: {   // Patricio 2
-      if (patriZ2 >= -15 and patriX2 < 15.0)
-      {
-          patriZ2=patriZ2+(1.66*2);
-          if (patriZ2>-11.5) patriX2+=1.66;
-          else if (patriZ2>-8) patriX2-=1.66;
-      }
-      /*else if (patriX2 <= 5.1 and patriZ2 >= 5.1)
-      {
-          patriZ2=patriZ2-(1.66*2);
-          if (patriZ2>11.5) patriX2-=1.66;
-          else if (patriZ2<8) patriX2+=1.66;
-      }
-      else if (patriX2 < 15.0 and patriZ2 <= 5.1)
-      {
-          patriX2=patriX2+(1.66*2);
-          if (patriX2>12) patriZ2+=1.66;
-          else if (patriX2<9) patriZ2-=1.66;
-      }
-      else if (patriX2 >= 15.0 and patriZ2 < 15)
-      {
-          patriZ2=patriZ2+(1.66*2);
-          if (patriZ2<9) patriX2+=1.66;
-          else if (patriZ2>12) patriX2-=1.66;
-      }*/
-      std::cout << "X" << patriX2 << std::endl;
-      std::cout << "Z" << patriZ2 << std::endl << std::endl;
-      rotacio2 += float(M_PI/6);
-      modelTransformPatri2();
+        giraPatri2();
         break;
     }
     default: event->ignore(); break;
   }
-  viewTransform();
+  //viewTransform();
   update();
 }
 
@@ -555,13 +529,40 @@ void MyGLWidget::carregaShaders()
   viewLoc = glGetUniformLocation (program->programId(), "view");
 }
 
+// -----------------------------------------------------------------
+// Funcions utilitzades per tecles i utilitzades com a slots per interactuar amb els elements d'interficie
+// -----------------------------------------------------------------
 void MyGLWidget::torna_inici()
 {
     makeCurrent();
+    iniEscena();
     iniCamera();
     update();
 }
 
+// Explicació de les funcions giraPatriX
+// -----------------------------
+/* Ubicació inicial Patricio 1 = (15,0,15) -> podriem dir que es el Pmax de la circumferència
+ * Centre rotació = (10,0,10) -> l'aconseguiriem fent (Pmax.x+Pmin.x)/2, Pmin.y, (Pmax.z+Pmin.z)/2
+ * per tant, sabem que Pmin (o punt final a on arribar per deixar el centre rotació fixat) es = (5,0,5)
+ * Per altra banda, es vol que el Patricio roti M_PI/6 (30º) seguint aquest recorregut, per tant,
+ * per aconseguir deixar al Patricio en el seu estat de rotació inicial (girar-lo 360º) tindrà que fer 12 moviments (360/30).
+ * La distancia entre el "punt inicial" i el "punt final" es de 10 d'anada i 10 de tornada, en total 20 de distància entre punts.
+ * Per tant, sabem que el Patricio ha de moures 20 punts en 12 moviments, el que es igual a 1.66 punts per moviment.
+ * Encara que, no terminarà de ser una circumferencia ja que només tenim 12 moviments, per tant, mes bé seria un dodecagon semblant a la figura de sota:
+ *
+ *                              *   *
+ *                          *           *
+ *
+ *                      *                   *
+ *
+ *                      *                   *
+ *
+ *                          *           *
+ *                              *   *
+ *
+ * Per al Patricio 2, es exactament el mateix però canviant el sentit de rotació i els punts de coordenades.
+ */
 void MyGLWidget::giraPatri1()
 {
     makeCurrent();
@@ -598,6 +599,32 @@ void MyGLWidget::giraPatri1()
 void MyGLWidget::giraPatri2()
 {
     makeCurrent();
+    if (patriZ2 <= -5.1 and patriX2 <= -15.0)
+    {
+        patriZ2=patriZ2+(1.66*2);
+        if (patriX2==-15) patriX2-=1.66;
+        else if (patriZ2>-8) patriX2+=1.66;
+    }
+    else if (patriX2 <= -5.1 and patriZ2 >= -5.1)
+    {
+        patriX2=patriX2+(1.66*2);
+        if (patriX2<-11) patriZ2+=1.66;
+        else if (patriX2>-8) patriZ2-=1.66;
+    }
+    else if (patriX2 >= -5.1 and patriZ2 > -15.0)
+    {
+        patriZ2=patriZ2-(1.66*2);
+        if (patriZ2>-9) patriX2+=1.66;
+        else if (patriZ2<-12) patriX2-=1.66;
+    }
+    else if (patriX2 >= -15.0 and patriZ2 <= -15.0)
+    {
+        patriX2=patriX2-(1.66*2);
+        if (patriX2>-9) patriZ2-=1.66;
+        else if (patriX2<-12) patriZ2+=1.66;
+    }
+    //std::cout << "X" << patriX2 << std::endl;
+    //std::cout << "Z" << patriZ2 << std::endl << std::endl;
     rotacio2 += float(M_PI/6);
     modelTransformPatri2();
     update();
