@@ -6,7 +6,6 @@
 #include <QKeyEvent>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
 #include "model.h"
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core 
@@ -94,10 +93,17 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     float patriX1, patriZ1, patriX2, patriZ2;
 
+    int value1 = 1, value2 = 1;
+
 public slots:
     void torna_inici();
     void giraPatri1();
     void giraPatri2();
     void canvi_cam();
+    //void slotcanvi(int value);
+
+signals:
+    void signalcanviaDial1(int);
+    void signalcanviaDial2(int);
 };
 

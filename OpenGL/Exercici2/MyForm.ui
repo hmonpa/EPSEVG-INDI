@@ -82,8 +82,17 @@
      </item>
      <item>
       <widget class="QDial" name="dialPatri1">
+       <property name="cursor">
+        <cursorShape>ArrowCursor</cursorShape>
+       </property>
        <property name="layoutDirection">
         <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>12</number>
        </property>
       </widget>
      </item>
@@ -108,7 +117,20 @@
       </widget>
      </item>
      <item>
-      <widget class="QDial" name="dialPatri2"/>
+      <widget class="QDial" name="dialPatri2">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>12</number>
+       </property>
+       <property name="invertedAppearance">
+        <bool>true</bool>
+       </property>
+       <property name="wrapping">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="verticalSpacer">
@@ -147,6 +169,8 @@
    <header>MyGLWidget.h</header>
    <container>1</container>
    <slots>
+    <signal>signalcanviaDial1(int)</signal>
+    <signal>signalcanviaDial2(int)</signal>
     <slot>torna_inici()</slot>
     <slot>giraPatri1()</slot>
     <slot>giraPatri2()</slot>
@@ -180,7 +204,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>777</x>
-     <y>25</y>
+     <y>48</y>
     </hint>
     <hint type="destinationlabel">
      <x>466</x>
@@ -228,11 +252,43 @@
    <hints>
     <hint type="sourcelabel">
      <x>795</x>
-     <y>43</y>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel">
      <x>577</x>
      <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalcanviaDial1(int)</signal>
+   <receiver>dialPatri1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>659</x>
+     <y>365</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>784</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalcanviaDial2(int)</signal>
+   <receiver>dialPatri2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>662</x>
+     <y>483</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>748</x>
+     <y>485</y>
     </hint>
    </hints>
   </connection>
