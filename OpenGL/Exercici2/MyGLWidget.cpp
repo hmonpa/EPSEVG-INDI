@@ -5,7 +5,7 @@
 MyGLWidget::MyGLWidget (QWidget* parent) : QOpenGLWidget(parent), program(NULL)
 {
   setFocusPolicy(Qt::StrongFocus);  // per rebre events de teclat
-  //connect(this, SIGNAL(canviaDial1(int)), this, SLOT(giraPatri1()));
+  //connect(this, SIGNAL(QDial::valueChanged(int)), this, SLOT(giraPatri1()));
   //connect(this, SIGNAL(signalcanviaDial1(int)), this, SLOT(QDial::setValue(int)));
 }
 
@@ -33,8 +33,6 @@ void MyGLWidget::iniEscena ()
   creaBuffersCub();
   //creaBuffersHomer();
   creaBuffersPatricio();
-
-  //centreEsc = glm::vec3(0,0,0);
 
   // Càlcul radi Escena
   calculaRadiEsc();
@@ -216,7 +214,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
   makeCurrent();
   switch (event->key()) {
 	case Qt::Key_I: {
-      iniCamera();
+      torna_inici();
 	  break;
     }
     case Qt::Key_C: {
@@ -226,16 +224,14 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
     case Qt::Key_R: {   // Patricio 1
       if (value1 < 12) value1+=1;
       else value1=1;
-      giraPatri1();
-
-        break;
+      emit signalcanviaDial1(value1);
+      break;
     }
     case Qt::Key_T: {   // Patricio 2
       if (value2 < 12) value2+=1;
       else value2=1;
-      giraPatri2();
-
-       break;
+      emit signalcanviaDial2(value2);
+      break;
     }
     default: event->ignore(); break;
   }
@@ -332,13 +328,12 @@ void MyGLWidget::calculaRadiEsc()
 
 void MyGLWidget::calculaCentreEsc()
 {
-    /* Pmax.x = 20, Pmax.y = 4, Pmax.z = 20
-    Pmin.x = -20, Pmin.y = 0, Pmin.z = -20
-    centreEsc = Pmax.x+Pmin.x/2, Pmin.y, Pmax.z+Pmin.z/2 = (0,0,0) */
     glm::vec3 Pmax;
     glm::vec3 Pmin;
     Pmax.x = 20, Pmax.y = 4, Pmax.z = 20;
     Pmin.x = -20, Pmin.y = 0, Pmin.z = -20;
+
+    // centreEsc = Pmax.x+Pmin.x/2, Pmin.y, Pmax.z+Pmin.z/2 = (0,0,0)
 
     centreEsc[0] = (Pmax.x+Pmin.x)/2;
     centreEsc[1] = Pmin.y;
@@ -543,6 +538,8 @@ void MyGLWidget::carregaShaders()
 void MyGLWidget::torna_inici()
 {
     makeCurrent();
+    int val=1;
+    emit signalinici(val);
     iniEscena();
     iniCamera();
     update();
@@ -598,11 +595,8 @@ void MyGLWidget::giraPatri1()
         if (patriZ1<9) patriX1+=1.66;
         else if (patriZ1>12) patriX1-=1.66;
     }
-    std::cout << "X1" << patriX1 << std::endl;
-    std::cout << "Z2" << patriZ1 << std::endl << std::endl;
     rotacio1 -= float(M_PI/6);
     modelTransformPatri1();
-    emit signalcanviaDial1(value1);
     update();
 }
 
@@ -633,11 +627,8 @@ void MyGLWidget::giraPatri2()
         if (patriX2>-9) patriZ2-=1.66;
         else if (patriX2<-12) patriZ2+=1.66;
     }
-    std::cout << "X2" << patriX1 << std::endl;
-    std::cout << "Z2" << patriZ1 << std::endl << std::endl;
     rotacio2 += float(M_PI/6);
     modelTransformPatri2();
-    emit signalcanviaDial2(value2);
     update();
 }
 
@@ -648,5 +639,3 @@ void MyGLWidget::canvi_cam()
     viewTransform();
     update();
 }
-
-

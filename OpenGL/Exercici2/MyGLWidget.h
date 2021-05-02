@@ -103,7 +103,8 @@ public slots:
     //void slotcanvi(int value);
 
 signals:
-    void signalcanviaDial1(int);
-    void signalcanviaDial2(int);
+    void signalcanviaDial1(int value);
+    void signalcanviaDial2(int value);
+    void signalinici(int value);
 };
 

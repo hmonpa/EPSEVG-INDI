@@ -171,6 +171,7 @@
    <slots>
     <signal>signalcanviaDial1(int)</signal>
     <signal>signalcanviaDial2(int)</signal>
+    <signal>signalinici(int)</signal>
     <slot>torna_inici()</slot>
     <slot>giraPatri1()</slot>
     <slot>giraPatri2()</slot>
@@ -213,38 +214,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>dialPatri1</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>widget</receiver>
-   <slot>giraPatri1()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>765</x>
-     <y>241</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>625</x>
-     <y>246</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dialPatri2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>widget</receiver>
-   <slot>giraPatri2()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>760</x>
-     <y>517</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>613</x>
-     <y>450</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>botoCamera</sender>
    <signal>clicked()</signal>
    <receiver>widget</receiver>
@@ -262,22 +231,6 @@
   </connection>
   <connection>
    <sender>widget</sender>
-   <signal>signalcanviaDial1(int)</signal>
-   <receiver>dialPatri1</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>659</x>
-     <y>365</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>784</x>
-     <y>278</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>widget</sender>
    <signal>signalcanviaDial2(int)</signal>
    <receiver>dialPatri2</receiver>
    <slot>setValue(int)</slot>
@@ -289,6 +242,86 @@
     <hint type="destinationlabel">
      <x>748</x>
      <y>485</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalcanviaDial1(int)</signal>
+   <receiver>dialPatri1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>716</x>
+     <y>392</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>787</x>
+     <y>303</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dialPatri1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widget</receiver>
+   <slot>giraPatri1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>758</x>
+     <y>309</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>683</x>
+     <y>351</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalinici(int)</signal>
+   <receiver>dialPatri1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>617</x>
+     <y>255</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>759</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalinici(int)</signal>
+   <receiver>dialPatri2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>636</x>
+     <y>527</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>776</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dialPatri2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widget</receiver>
+   <slot>giraPatri2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>776</x>
+     <y>508</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>659</x>
+     <y>506</y>
     </hint>
    </hints>
   </connection>
