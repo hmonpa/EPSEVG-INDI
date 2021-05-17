@@ -40,6 +40,7 @@ void MyGLWidget::iniEscena ()
 
   //glUniform3fv(posFocusLoc, 1, &posFocus[0]);
   glUniform3fv(llumLoc, 1, &llumAmbient[0]);
+  BackFaceCul = true;
 }
 
 void MyGLWidget::iniCamera ()
@@ -51,10 +52,10 @@ void MyGLWidget::iniCamera ()
   viewTransform ();
 
   SCA = true;
-  posFocus = glm::vec3(0, -0.5, 0);
+  //posFocus = glm::vec3(0, -0.5, 0);
   calculoSCA();
 
-  colFocus = glm::vec3(0.8,0.8,0.8);      // colFocus
+  colFocus = glm::vec3(0.8,0.8,0);      // colFocus
   glUniform3fv(colFocusLoc, 1, &colFocus[0]);
 
   mouPatri = glm::vec3(0, -0.85, 0);
@@ -160,7 +161,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
   case Qt::Key_F: {
     SCA = !SCA;
     if (SCA){
-        posFocus = glm::vec3(0,-0.5,0);
+        //posFocus = glm::vec3(0,-0.5,0);
         calculoSCA();
     }
     else {
@@ -201,6 +202,12 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
       glUniform3fv(posFocusLoc, 1, &posFocus[0]);
       break;
   }
+  case Qt::Key_B: {
+          BackFaceCul = !BackFaceCul;
+          if (BackFaceCul) glEnable(GL_CULL_FACE);
+          else glDisable(GL_CULL_FACE);
+          break;
+      }
     default: event->ignore(); break;
   }
   update();
@@ -208,7 +215,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
 
 void MyGLWidget::calculoSCA()
 {
-    //posFocus = glm::vec3(1,1,1);
+    posFocus = glm::vec3(1,1,1);
     posFocus = glm::vec3(View * glm::vec4(posFocus, 1.));
     glUniform3fv(posFocusLoc, 1, &posFocus[0]);
 }

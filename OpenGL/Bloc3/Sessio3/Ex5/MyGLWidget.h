@@ -73,7 +73,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     int xClick, yClick;
     float angleY, angleX;
     bool perspectiva;
-    bool SCA;
+    bool SCA, BackFaceCul, encender;
     glm::mat4 View;
 
     // Declaración de variables que utilizaremos como uniforms
