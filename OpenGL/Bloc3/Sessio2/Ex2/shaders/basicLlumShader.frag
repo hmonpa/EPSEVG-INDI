@@ -1,6 +1,6 @@
 #version 330 core
 
-in vec3 fcolor;
+//in vec3 fcolor;
 out vec4 FragColor;
 
 // Nuevos atributos pasados al FS
@@ -8,7 +8,9 @@ in vec4 vertSCO;
 in vec3 normalSCO;
 
 uniform vec3 posFocus;
-vec3 llumAmbient = vec3(0.2, 0.2, 0.2);         // luz ambiente
+uniform vec3 colFocus;
+//vec3 llumAmbient = vec3(0.2, 0.2, 0.2);         // luz ambiente
+uniform vec3 llumAmbient;
 
 // Propiedades material
 in vec3 matambFrag;
@@ -29,7 +31,7 @@ vec3 Lambert (vec3 NormSCO, vec3 L)
 
     // Afegim component difusa, si n'hi ha
     if (dot (L, NormSCO) > 0)
-      colRes = colRes + fcolor * matdiffFrag * dot (L, NormSCO);
+      colRes = colRes + colFocus * matdiffFrag * dot (L, NormSCO);
     return (colRes);
 }
 
@@ -51,7 +53,7 @@ vec3 Phong (vec3 NormSCO, vec3 L, vec4 vertSCO)
       return colRes;  // no hi ha component especular
 
     float shine = pow(max(0.0, dot(R, V)), matshinFrag);
-    return (colRes + matspecFrag * fcolor * shine);
+    return (colRes + matspecFrag * colFocus * shine);
 }
 
 void main()

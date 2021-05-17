@@ -35,7 +35,7 @@ void MyGLWidget::iniEscena ()
   radiEsc = sqrt(3);  
 
   colFocus = glm::vec3(0.8, 0.8, 0.8);      // colFocus
-  posFocus = glm::vec3(0, 0, -1);            // posicioFocus: On apunta el focus de llum?
+  posFocus = glm::vec3(0, 0, 0);            // posicioFocus: On apunta el focus de llum?
   glUniform3fv(colFocusLoc, 1, &colFocus[0]);
   glUniform3fv(posFocusLoc, 1, &posFocus[0]);
 }
@@ -302,7 +302,7 @@ void MyGLWidget::createBuffersTerraIParet ()
   // Definim el material del terra
   glm::vec3 amb(0,0,1);             // Llum ambient - R G B (Rojo, verde, azul)
   glm::vec3 diff(0,0,1);            // Difús
-  glm::vec3 spec(0,0,1);                // Especular
+  glm::vec3 spec(1,1,1);                // Especular
   float shin = 100;
 
   // Fem que aquest material afecti a tots els vèrtexs per igual

@@ -74,6 +74,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     // Declaración de variables que utilizaremos como uniforms
     GLuint colFocusLoc, posFocusLoc;
-    glm::vec3 colFocus, posFocus;
+    GLuint llumLoc;
+    glm::vec3 colFocus, posFocus, llumAmbient;
 };
 

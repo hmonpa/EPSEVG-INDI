@@ -34,10 +34,12 @@ void MyGLWidget::iniEscena ()
 {
   radiEsc = sqrt(3);  
 
-  colFocus = glm::vec3(0.8, 0.8, 0.8);      // colFocus
+  colFocus = glm::vec3(0.8,0.8,0.8);      // colFocus
   posFocus = glm::vec3(1,1,1);            // posicioFocus: On apunta el focus de llum?
+  llumAmbient = glm::vec3(0.2, 0.2, 0.2);       // novetat: llumambient passada com a uniform
   glUniform3fv(colFocusLoc, 1, &colFocus[0]);
   glUniform3fv(posFocusLoc, 1, &posFocus[0]);
+  glUniform3fv(llumLoc, 1, &llumAmbient[0]);
 }
 
 void MyGLWidget::iniCamera ()
@@ -302,7 +304,7 @@ void MyGLWidget::createBuffersTerraIParet ()
   // Definim el material del terra
   glm::vec3 amb(0,0,1);             // Llum ambient - R G B (Rojo, verde, azul)
   glm::vec3 diff(0,0,1);            // Difús
-  glm::vec3 spec(0,0,1);                // Especular
+  glm::vec3 spec(1,1,1);                // Especular
   float shin = 100;
 
   // Fem que aquest material afecti a tots els vèrtexs per igual
@@ -410,6 +412,7 @@ void MyGLWidget::carregaShaders()
   // ADICCIÓ NOUS UNIFORMS
   colFocusLoc = glGetUniformLocation (program->programId(), "colFocus");
   posFocusLoc = glGetUniformLocation (program->programId(), "posFocus");
+  llumLoc = glGetUniformLocation (program->programId(), "llumAmbient");
 }
 
 
