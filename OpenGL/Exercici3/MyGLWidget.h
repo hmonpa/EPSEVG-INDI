@@ -52,6 +52,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void calculaCapsaModel (Model &m, float &escala, glm::vec3 &centreBase);
     void iniEscena ();
     void iniCamera ();
+    void calculaSCA();
 
 
     // VAO names
@@ -88,7 +89,24 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     glm::vec3 colFocus, llumAmbient;
     glm::vec3 posFocus, posFocus2, posFocus3;
 
-    //glm::vec3 posFocus[3];
+    glm::vec3 off;
+    glm::vec3 posLlumReactor, colorLlumReactor;
+
+    GLuint posLlumReactorLoc, colorLlumReactorLoc;
+
+
+
+public slots:
+    void controlallums0();
+    void controlallums1();
+    void controlallums2();
+    void controlallums3();
+
+signals:
+    void signalPolsa0();
+    void signalPolsa1();
+    void signalPolsa2();
+    void signalPolsa3();
 
 };
 

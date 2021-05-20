@@ -42,23 +42,25 @@ void MyGLWidget::iniEscena ()
   radiEsc = 15;
 
   colFocus = glm::vec3(0.8,0.8,0.8);            // colFocus
+  glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+
   llumAmbient = glm::vec3(0.1, 0.1, 0.1);       // llumambient passada com a uniform
+  glUniform3fv(llumLoc, 1, &llumAmbient[0]);
 
   posFocus = glm::vec3(0.f,5.f,-10.f);          // posicioFocus: On apunta el focus de llum?
-  posFocus2 = glm::vec3(0.f,5.f,0.f);
-  posFocus3 = glm::vec3(0.f,5.f,10.f);
-
-  /*glm::vec3 posFocuss[] = {
-      glm::vec3(0.f,5.f,-10.f),
-      glm::vec3(0.f,5.f,0.f),
-      glm::vec3(0.f,5.f,10.f)
-  };*/
-
-  glUniform3fv(colFocusLoc, 1, &colFocus[0]);
   glUniform3fv(posFocusLoc, 1, &posFocus[0]);
+
+  posFocus2 = glm::vec3(0.f,5.f,0.f);
   glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
+
+  posFocus3 = glm::vec3(0.f,5.f,10.f);
   glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
-  glUniform3fv(llumLoc, 1, &llumAmbient[0]);
+
+  off = glm::vec3(-100.f,-100.f,-100.f);        // Utilitzat per apuntar un focus de llum i simular que està apagat
+
+  posLlumReactor = glm::vec3(-1.9, 3.60, -5.65);
+  colorLlumReactor = glm::vec3(1.0,0.2,0.0);
+  calculaSCA();
 }
 
 void MyGLWidget::iniCamera ()
@@ -68,6 +70,7 @@ void MyGLWidget::iniCamera ()
 
   projectTransform ();
   viewTransform ();
+
 }
 
 void MyGLWidget::paintGL () 
@@ -194,47 +197,87 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
             break;
         }
         case Qt::Key_0: {
-            colFocus = glm::vec3(0,0,0);
-            glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+            controlallums0();
+            emit signalPolsa0();
             break;
         }
         case Qt::Key_1: {
-            posFocus = glm::vec3(0.f,5.f,-10.f);
-            posFocus2 = glm::vec3(100.f,100.f,100.f);
-            posFocus3 = glm::vec3(100.f,100.f,100.f);
-            colFocus = glm::vec3(0.8,0.8,0.8);
-            glUniform3fv(posFocusLoc, 1, &posFocus[0]);
-            glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
-            glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
-            glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+            controlallums1();
+            emit signalPolsa1();
             break;
         }
         case Qt::Key_2: {
-            posFocus = glm::vec3(0.f,5.f,-10.f);
-            posFocus2 = glm::vec3(0.f,5.f,0.f);
-            posFocus3 = glm::vec3(100.f,100.f,100.f);
-            colFocus = glm::vec3(0.8,0.8,0.8);
-            glUniform3fv(posFocusLoc, 1, &posFocus[0]);
-            glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
-            glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
-            glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+            controlallums2();
+            emit signalPolsa2();
             break;
         }
         case Qt::Key_3: {
-            posFocus = glm::vec3(0.f,5.f,-10.f);
-            posFocus2 = glm::vec3(0.f,5.f,0.f);
-            posFocus3 = glm::vec3(0.f,5.f,10.f);
-            colFocus = glm::vec3(0.8,0.8,0.8);
-            glUniform3fv(posFocusLoc, 1, &posFocus[0]);
-            glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
-            glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
-            glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+            controlallums3();
+            emit signalPolsa3();
             break;
         }
 
         default: event->ignore(); break;
     }
     update();
+}
+
+// Exs 3 i 4
+void MyGLWidget::controlallums0()
+{
+    makeCurrent();
+    colFocus = glm::vec3(0,0,0);
+    glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+    update();
+}
+
+void MyGLWidget::controlallums1()
+{
+    makeCurrent();
+    posFocus = glm::vec3(0.f,5.f,-10.f);
+    posFocus2 = off;
+    posFocus3 = off;
+    colFocus = glm::vec3(0.8,0.8,0.8);
+    glUniform3fv(posFocusLoc, 1, &posFocus[0]);
+    glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
+    glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
+    glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+    update();
+}
+
+void MyGLWidget::controlallums2()
+{
+    makeCurrent();
+    posFocus = glm::vec3(0.f,5.f,-10.f);
+    posFocus2 = glm::vec3(0.f,5.f,0.f);
+    posFocus3 = off;
+    colFocus = glm::vec3(0.8,0.8,0.8);
+    glUniform3fv(posFocusLoc, 1, &posFocus[0]);
+    glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
+    glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
+    glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+    update();
+}
+
+void MyGLWidget::controlallums3()
+{
+    makeCurrent();
+    posFocus = glm::vec3(0.f,5.f,-10.f);
+    posFocus2 = glm::vec3(0.f,5.f,0.f);
+    posFocus3 = glm::vec3(0.f,5.f,10.f);
+    colFocus = glm::vec3(0.8,0.8,0.8);
+    glUniform3fv(posFocusLoc, 1, &posFocus[0]);
+    glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
+    glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
+    glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+    update();
+}
+
+// Ex5
+void MyGLWidget::calculaSCA()
+{
+    posLlumReactor = glm::vec3(View * glm::vec4(posLlumReactor, 1.));
+    glUniform3fv(posLlumReactorLoc, 1, &posLlumReactor[0]);
 }
 
 void MyGLWidget::mousePressEvent (QMouseEvent *e)
@@ -499,5 +542,8 @@ void MyGLWidget::carregaShaders()
   posFocusLoc = glGetUniformLocation (program->programId(), "posFocus");
   posFocusLoc2 = glGetUniformLocation (program->programId(), "posFocus2");
   posFocusLoc3 = glGetUniformLocation (program->programId(), "posFocus3");
+
+  posLlumReactorLoc = glGetUniformLocation (program->programId(), "posLlumReactor");
+  colorLlumReactorLoc = glGetUniformLocation (program->programId(), "colorLlumReactor");
 }
 

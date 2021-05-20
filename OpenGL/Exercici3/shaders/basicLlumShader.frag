@@ -13,6 +13,9 @@ uniform vec3 posFocus3;
 
 uniform vec3 llumAmbient;
 
+uniform vec3 posLlumReactor;
+uniform vec3 colorLlumReactor;
+
 // Propiedades material
 in vec3 matambFrag;
 in vec3 matdiffFrag;
@@ -71,8 +74,13 @@ void main()
         vec3 fragmentColor2 = Phong(normalSCO, L2, vertSCO);
         vec3 fragmentColor3 = Phong(normalSCO, L3, vertSCO);
 
+        vec4 posLlumReacFrag = viewMat * vec4(posLlumReactor,1.0);
+        vec3 L4 = normalize(posLlumReacFrag.xyz - vertSCO.xyz);
+        vec3 fragmentColor4 = Phong(normalSCO, L4, vertSCO);
+
         FragColor = vec4(fragmentColor1,1);
         FragColor += vec4(fragmentColor2,1);
         FragColor += vec4(fragmentColor3,1);
+        FragColor += vec4(fragmentColor4,1);
 }
 

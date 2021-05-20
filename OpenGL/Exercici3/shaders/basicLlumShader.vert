@@ -19,6 +19,8 @@ uniform vec3 possFocus;
 uniform vec3 posFocus2;
 uniform vec3 posFocus3;
 
+uniform vec3 colorLlumReactor;
+uniform vec3 posLlumReactor;
 
 // Se envian del VS al FS...
 out vec3 matambFrag;                                // ... propiedades de material al FS...
@@ -34,15 +36,10 @@ out vec3 normalSCO;                                 // ... normal del vértex en
 
 void main()
 {
-
-    //fcolor = matdiff;
-    //gl_Position = proj * view * TG * vec4 (vertex, 1.0);
-    //cridalambert();
-    //cridaphong();
     vertSCO = view * TG * vec4(vertex, 1.0);
     mat3 normalMatrix = inverse(transpose (mat3 (view*TG)));
     normalSCO = normalize (normalMatrix * normal);             // Por el momento en el VS lo declararemos así, calcula la matriz para cada vértice, poco eficiente, pero facil
-    fcolor = colFocus;
+    fcolor += colFocus;
 
     gl_Position = proj * vertSCO;
 

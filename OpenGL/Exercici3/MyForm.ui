@@ -40,6 +40,164 @@
       </spacer>
      </item>
      <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>    Nombre</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="font">
+        <font>
+         <strikeout>false</strikeout>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="text">
+        <string>    de llums:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButton_0">
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButton_1">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButton_2">
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButton_3">
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -63,10 +221,25 @@
    <header>MyGLWidget.h</header>
    <container>1</container>
    <slots>
+    <signal>signalcanviaDial1(int)</signal>
+    <signal>signalcanviaDial2(int)</signal>
+    <signal>signalinici(int)</signal>
     <signal>signalFocusMovedKeyboard(int)</signal>
     <signal>signalEngineMode(bool)</signal>
+    <signal>signalPolsa0()</signal>
+    <signal>signalPolsa1()</signal>
+    <signal>signalPolsa2()</signal>
+    <signal>signalPolsa3()</signal>
+    <slot>torna_inici()</slot>
+    <slot>giraPatri1()</slot>
+    <slot>giraPatri2()</slot>
+    <slot>canvi_cam()</slot>
     <slot>onFocusMoved(int)</slot>
     <slot>onEngineMode(bool)</slot>
+    <slot>controlallums0()</slot>
+    <slot>controlallums1()</slot>
+    <slot>controlallums2()</slot>
+    <slot>controlallums3()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -85,6 +258,134 @@
     <hint type="destinationlabel">
      <x>839</x>
      <y>529</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_0</sender>
+   <signal>clicked()</signal>
+   <receiver>widget</receiver>
+   <slot>controlallums0()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>750</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>640</x>
+     <y>306</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_1</sender>
+   <signal>clicked()</signal>
+   <receiver>widget</receiver>
+   <slot>controlallums1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>756</x>
+     <y>363</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>599</x>
+     <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>widget</receiver>
+   <slot>controlallums2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>754</x>
+     <y>419</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>658</x>
+     <y>419</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>widget</receiver>
+   <slot>controlallums3()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>764</x>
+     <y>476</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>587</x>
+     <y>473</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalPolsa0()</signal>
+   <receiver>radioButton_0</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>657</x>
+     <y>334</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>792</x>
+     <y>316</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalPolsa1()</signal>
+   <receiver>radioButton_1</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>665</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>770</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalPolsa2()</signal>
+   <receiver>radioButton_2</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>670</x>
+     <y>447</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>777</x>
+     <y>427</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalPolsa3()</signal>
+   <receiver>radioButton_3</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>671</x>
+     <y>507</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>758</x>
+     <y>476</y>
     </hint>
    </hints>
   </connection>
