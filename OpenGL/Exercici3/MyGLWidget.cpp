@@ -36,31 +36,11 @@ void MyGLWidget::iniEscena ()
   creaBuffersPersonatge();
   creaBuffersTerra();
 
-
   avioPos = glm::vec3(0.0, 0.0, -5.0);
   centreEsc = glm::vec3 (0, 0, 0);  
   radiEsc = 15;
 
-  colFocus = glm::vec3(0.8,0.8,0.8);            // colFocus
-  glUniform3fv(colFocusLoc, 1, &colFocus[0]);
-
-  llumAmbient = glm::vec3(0.1, 0.1, 0.1);       // llumambient passada com a uniform
-  glUniform3fv(llumLoc, 1, &llumAmbient[0]);
-
-  posFocus = glm::vec3(0.f,5.f,-10.f);          // posicioFocus: On apunta el focus de llum?
-  glUniform3fv(posFocusLoc, 1, &posFocus[0]);
-
-  posFocus2 = glm::vec3(0.f,5.f,0.f);
-  glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
-
-  posFocus3 = glm::vec3(0.f,5.f,10.f);
-  glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
-
-  off = glm::vec3(-100.f,-100.f,-100.f);        // Utilitzat per apuntar un focus de llum i simular que està apagat
-
-  posLlumReactor = glm::vec3(-1.9, 3.60, -5.65);
-  colorLlumReactor = glm::vec3(1.0,0.2,0.0);
-  calculaSCA();
+  llumMotor = true;
 }
 
 void MyGLWidget::iniCamera ()
@@ -70,6 +50,16 @@ void MyGLWidget::iniCamera ()
 
   projectTransform ();
   viewTransform ();
+
+  encenLlumsInici();
+  off = glm::vec3(-100.f,-100.f,-100.f);        // Utilitzat per apuntar un focus de llum i simular que està apagat
+
+  posLlumReactor = glm::vec3(-1.9, 3.60, -5.65);
+  glUniform3fv(posLlumReactorLoc, 1, &posLlumReactor[0]);
+  //calculaSCA();
+
+  colorLlumReactor = glm::vec3(1.0,0.2,0.0);
+  glUniform3fv(colorLlumReactorLoc, 1, &colorLlumReactor[0]);
 
 }
 
@@ -189,11 +179,23 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
     switch (event->key()) {
 
         case Qt::Key_S: {
-            if(avioPos.z<10) avioPos += glm::vec3(0.f,0.f,0.2f);
+            if(avioPos.z<10)
+            {
+                avioPos += glm::vec3(0.f,0.f,0.2f);
+                // Ex5 - Moviment llum reactor amb l'avió
+                posLlumReactor.z += 0.2f;
+                glUniform3fv(posLlumReactorLoc, 1, &posLlumReactor[0]);
+            }
             break;
         }
         case Qt::Key_W: {
-            if(avioPos.z>-6) avioPos -= glm::vec3(0.f,0.f,0.2f);
+            if(avioPos.z>-6)
+            {
+                avioPos -= glm::vec3(0.f,0.f,0.2f);
+                // Ex5 - Moviment llum reactor amb l'avió
+                posLlumReactor.z -= 0.2f;
+                glUniform3fv(posLlumReactorLoc, 1, &posLlumReactor[0]);
+            }
             break;
         }
         case Qt::Key_0: {
@@ -216,10 +218,50 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
             emit signalPolsa3();
             break;
         }
+        case Qt::Key_E: {
+        llumMotor = !llumMotor;
+        if (llumMotor) valor = 0;
+        else valor = 1;
+
+         emit signalLlumMotor(valor);
+         controlaLlumMotor();
+         break;
+        }
 
         default: event->ignore(); break;
     }
     update();
+}
+
+void MyGLWidget::controlaLlumMotor()
+{
+    makeCurrent();
+    llumMotor = !llumMotor;
+    if (llumMotor) colorLlumReactor = glm::vec3(1.0,0.2,0.0);
+    else colorLlumReactor = glm::vec3(0.0,0.0,0.0);
+
+    glUniform3fv(colorLlumReactorLoc, 1, &colorLlumReactor[0]);
+    update();
+}
+
+
+
+void MyGLWidget::encenLlumsInici()
+{
+    colFocus = glm::vec3(0.8,0.8,0.8);            // colFocus
+    glUniform3fv(colFocusLoc, 1, &colFocus[0]);
+
+    llumAmbient = glm::vec3(0.1, 0.1, 0.1);       // llumambient passada com a uniform
+    glUniform3fv(llumLoc, 1, &llumAmbient[0]);
+
+    posFocus = glm::vec3(0.f,5.f,-10.f);          // posicioFocus: On apunta el focus de llum?
+    glUniform3fv(posFocusLoc, 1, &posFocus[0]);
+
+    posFocus2 = glm::vec3(0.f,5.f,0.f);
+    glUniform3fv(posFocusLoc2, 1, &posFocus2[0]);
+
+    posFocus3 = glm::vec3(0.f,5.f,10.f);
+    glUniform3fv(posFocusLoc3, 1, &posFocus3[0]);
 }
 
 // Exs 3 i 4

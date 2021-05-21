@@ -40,9 +40,79 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>    Nombre</string>
+        <string>Llum motor</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_8">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>ON        OFF</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="horizontalSlider">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximum">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_7">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>     Nombre</string>
        </property>
       </widget>
      </item>
@@ -50,12 +120,13 @@
       <widget class="QLabel" name="label_2">
        <property name="font">
         <font>
+         <pointsize>10</pointsize>
          <strikeout>false</strikeout>
          <kerning>true</kerning>
         </font>
        </property>
        <property name="text">
-        <string>    de llums:</string>
+        <string> llums escena</string>
        </property>
       </widget>
      </item>
@@ -230,6 +301,7 @@
     <signal>signalPolsa1()</signal>
     <signal>signalPolsa2()</signal>
     <signal>signalPolsa3()</signal>
+    <signal>signalLlumMotor(int)</signal>
     <slot>torna_inici()</slot>
     <slot>giraPatri1()</slot>
     <slot>giraPatri2()</slot>
@@ -240,6 +312,7 @@
     <slot>controlallums1()</slot>
     <slot>controlallums2()</slot>
     <slot>controlallums3()</slot>
+    <slot>controlaLlumMotor()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -269,7 +342,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>750</x>
-     <y>308</y>
+     <y>318</y>
     </hint>
     <hint type="destinationlabel">
      <x>640</x>
@@ -285,7 +358,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>756</x>
-     <y>363</y>
+     <y>373</y>
     </hint>
     <hint type="destinationlabel">
      <x>599</x>
@@ -301,7 +374,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>754</x>
-     <y>419</y>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
      <x>658</x>
@@ -386,6 +459,38 @@
     <hint type="destinationlabel">
      <x>758</x>
      <y>476</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widget</receiver>
+   <slot>controlaLlumMotor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>771</x>
+     <y>291</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>614</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>signalLlumMotor(int)</signal>
+   <receiver>horizontalSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>197</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>748</x>
+     <y>295</y>
     </hint>
    </hints>
   </connection>

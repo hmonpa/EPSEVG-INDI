@@ -52,8 +52,9 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void calculaCapsaModel (Model &m, float &escala, glm::vec3 &centreBase);
     void iniEscena ();
     void iniCamera ();
-    void calculaSCA();
 
+    void encenLlumsInici();
+    void calculaSCA();
 
     // VAO names
     GLuint VAO_avio, VAO_hangar, VAO_Terra ;
@@ -94,19 +95,21 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     GLuint posLlumReactorLoc, colorLlumReactorLoc;
 
-
+    bool llumMotor;
+    int valor = 1;
 
 public slots:
     void controlallums0();
     void controlallums1();
     void controlallums2();
     void controlallums3();
+    void controlaLlumMotor();
 
 signals:
     void signalPolsa0();
     void signalPolsa1();
     void signalPolsa2();
     void signalPolsa3();
-
+    void signalLlumMotor(int valor);
 };
 
