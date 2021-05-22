@@ -54,7 +54,6 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void iniCamera ();
 
     void encenLlumsInici();
-    void calculaSCA();
 
     // VAO names
     GLuint VAO_avio, VAO_hangar, VAO_Terra ;

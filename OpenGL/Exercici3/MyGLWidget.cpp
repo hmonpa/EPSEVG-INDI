@@ -18,7 +18,7 @@ MyGLWidget::~MyGLWidget ()
 void MyGLWidget::initializeGL ()
 {
   // Cal inicialitzar l'ús de les funcions d'OpenGL
-  initializeOpenGLFunctions();  
+  initializeOpenGLFunctions();
 
   glClearColor(0.0, 0.0, 0.0, 1.0); // defineix color de fons (d'esborrat)
   glEnable(GL_DEPTH_TEST);
@@ -27,9 +27,6 @@ void MyGLWidget::initializeGL ()
   iniCamera ();
 }
 
-
-
-
 void MyGLWidget::iniEscena ()
 {
   creaBuffersHangar();
@@ -37,10 +34,11 @@ void MyGLWidget::iniEscena ()
   creaBuffersTerra();
 
   avioPos = glm::vec3(0.0, 0.0, -5.0);
-  centreEsc = glm::vec3 (0, 0, 0);  
+  centreEsc = glm::vec3 (0, 0, 0);
   radiEsc = 15;
 
   llumMotor = true;
+  off = glm::vec3(-100.f,-100.f,-100.f);                        // Utilitzat per apuntar un focus de llum i simular que està apagat
 }
 
 void MyGLWidget::iniCamera ()
@@ -52,18 +50,17 @@ void MyGLWidget::iniCamera ()
   viewTransform ();
 
   encenLlumsInici();
-  off = glm::vec3(-100.f,-100.f,-100.f);        // Utilitzat per apuntar un focus de llum i simular que està apagat
 
-  posLlumReactor = glm::vec3(-1.9, 3.60, -5.65);
+  posLlumReactor = glm::vec3(avioPos.x-(-1.9), 3.60, -5.65);    // Posició calculada per a que coincideixi amb la imatge demanada
   glUniform3fv(posLlumReactorLoc, 1, &posLlumReactor[0]);
-  //calculaSCA();
 
   colorLlumReactor = glm::vec3(1.0,0.2,0.0);
   glUniform3fv(colorLlumReactorLoc, 1, &colorLlumReactor[0]);
 
+  emit signalPolsa3();
 }
 
-void MyGLWidget::paintGL () 
+void MyGLWidget::paintGL ()
 {
 // Aquest codi és necessari únicament per a MACs amb pantalla retina.
 #ifdef __APPLE__
@@ -80,7 +77,7 @@ void MyGLWidget::paintGL ()
     projectTransform ();
     viewTransform ();
     // Esborrem el frame-buffer i el depth-buffer
-    glClearColor(0.4f, 0.4f, 0.5f, 1.f);                            // Ex1 : Modificació del color de fons
+    glClearColor(0.4f, 0.4f, 0.5f, 1.f);                        // Ex1 : Modificació del color de fons
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //--------------------------------------------------------
@@ -145,7 +142,7 @@ void MyGLWidget::projectTransform ()
 {
   float fov, zn, zf;
   glm::mat4 Proj;  // Matriu de projecció
-  
+
   fov = float(M_PI/4.0);
   zn = radiEsc*0.25;
   zf = 3*radiEsc;
@@ -198,6 +195,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
             }
             break;
         }
+        // Exs 3 i 4
         case Qt::Key_0: {
             controlallums0();
             emit signalPolsa0();
@@ -218,29 +216,19 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)  // Cal modificar aquesta funci
             emit signalPolsa3();
             break;
         }
+        // Ex 6
         case Qt::Key_E: {
-        llumMotor = !llumMotor;
-        if (llumMotor) valor = 0;
-        else valor = 1;
+            llumMotor = !llumMotor;
+            if (llumMotor) valor = 0;
+            else valor = 1;
 
-         emit signalLlumMotor(valor);
-         controlaLlumMotor();
-         break;
+            emit signalLlumMotor(valor);
+            controlaLlumMotor();
+            break;
         }
 
         default: event->ignore(); break;
     }
-    update();
-}
-
-void MyGLWidget::controlaLlumMotor()
-{
-    makeCurrent();
-    llumMotor = !llumMotor;
-    if (llumMotor) colorLlumReactor = glm::vec3(1.0,0.2,0.0);
-    else colorLlumReactor = glm::vec3(0.0,0.0,0.0);
-
-    glUniform3fv(colorLlumReactorLoc, 1, &colorLlumReactor[0]);
     update();
 }
 
@@ -254,7 +242,7 @@ void MyGLWidget::encenLlumsInici()
     llumAmbient = glm::vec3(0.1, 0.1, 0.1);       // llumambient passada com a uniform
     glUniform3fv(llumLoc, 1, &llumAmbient[0]);
 
-    posFocus = glm::vec3(0.f,5.f,-10.f);          // posicioFocus: On apunta el focus de llum?
+    posFocus = glm::vec3(0.f,5.f,-10.f);          // posicioFocus: On apunta el focus de llum
     glUniform3fv(posFocusLoc, 1, &posFocus[0]);
 
     posFocus2 = glm::vec3(0.f,5.f,0.f);
@@ -315,11 +303,16 @@ void MyGLWidget::controlallums3()
     update();
 }
 
-// Ex5
-void MyGLWidget::calculaSCA()
+// Ex 6
+void MyGLWidget::controlaLlumMotor()
 {
-    posLlumReactor = glm::vec3(View * glm::vec4(posLlumReactor, 1.));
-    glUniform3fv(posLlumReactorLoc, 1, &posLlumReactor[0]);
+    makeCurrent();
+    llumMotor = !llumMotor;
+    if (llumMotor) colorLlumReactor = glm::vec3(1.0,0.2,0.0);
+    else colorLlumReactor = glm::vec3(0.0,0.0,0.0);
+
+    glUniform3fv(colorLlumReactorLoc, 1, &colorLlumReactor[0]);
+    update();
 }
 
 void MyGLWidget::mousePressEvent (QMouseEvent *e)
@@ -345,7 +338,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *e)
   if (DoingInteractive == ROTATE)
   {
     // Fem la rotació
-    angleY += (e->x() - xClick) * M_PI / 180.0;    
+    angleY += (e->x() - xClick) * M_PI / 180.0;
     viewTransform ();
   }
 
@@ -396,7 +389,7 @@ void MyGLWidget::creaBuffersModel(Model &model, const char *fileName, GLuint *VA
 
   // Calculem la capsa contenidora del model
   calculaCapsaModel(model, escala, centreBase);
-  
+
   // Creació del Vertex Array Object del model
   glGenVertexArrays(1, VAO);
   glBindVertexArray(*VAO);
@@ -462,7 +455,7 @@ void MyGLWidget::creaBuffersTerra ()
     glm::vec3(-dim, 0.0, -dim),
     glm::vec3(dim, 0.0, dim),
     glm::vec3(dim, 0.0, -dim)
-  }; 
+  };
 
   // VBO amb la normal de cada vèrtex
   glm::vec3 norm1 (0,1,0);
@@ -577,9 +570,8 @@ void MyGLWidget::carregaShaders()
   projLoc = glGetUniformLocation (program->programId(), "proj");
   viewLoc = glGetUniformLocation (program->programId(), "view");
 
-
+  // Nous uniforms...
   colFocusLoc = glGetUniformLocation (program->programId(), "colFocus");
-  //posFocusLoc = glGetUniformLocation (program->programId(), "posFocus"), 3, glm::value_ptr(posFocus[0]);
   llumLoc = glGetUniformLocation (program->programId(), "llumAmbient");
   posFocusLoc = glGetUniformLocation (program->programId(), "posFocus");
   posFocusLoc2 = glGetUniformLocation (program->programId(), "posFocus2");
@@ -588,4 +580,3 @@ void MyGLWidget::carregaShaders()
   posLlumReactorLoc = glGetUniformLocation (program->programId(), "posLlumReactor");
   colorLlumReactorLoc = glGetUniformLocation (program->programId(), "colorLlumReactor");
 }
-
