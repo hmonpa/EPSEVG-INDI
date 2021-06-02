@@ -76,7 +76,7 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     int xClick, yClick;
     float angleY, angleX;
 
-    // Examen
+    // Exercici 1
     void creaBuffersLego();
     void modelTransformLego1();
     void modelTransformLego2();
@@ -89,6 +89,14 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     float posLegoX, posLegoY, posLegoZ1, posLegoZ2;
     float orientacioLego;
+
+    bool modelLego;
+
+    // Exercici 2
+    float FOV, FOV_orig, ra;
+    glm::vec3 centreEsc;
+
+    void calculaRadiEsc();
 
 };
 

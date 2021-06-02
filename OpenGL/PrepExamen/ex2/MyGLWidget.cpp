@@ -38,20 +38,31 @@ void MyGLWidget::initializeGL ()
 
 void MyGLWidget::iniEscena ()
 {
-  radiEsc = sqrt(80);
+  //radiEsc = sqrt(80);
+  calculaRadiEsc();
+  std::cout << "Radi calculat: " << radiEsc << std::endl;
 
   posLegoX = -7.0;
   posLegoY = 0.0;
   posLegoZ1 = 3.0;
   posLegoZ2 = -3.0;
   posPilota = glm::vec3(9.0, 0.0, 0.0);  // posició inicial de la pilota
+
+
+  centreEsc = glm::vec3(0, 1.5, 0);
 }
 
 void MyGLWidget::iniCamera ()
 {
-  angleY = M_PI/4.0;
+  angleY = M_PI/3.0;
+  angleX = 0;
 
   orientacioLego = M_PI/180*90;             // Hacia las X positivas
+
+  FOV_orig = 2.0 * asin (radiEsc / (radiEsc*2.0));
+  // Cámara centrada, entera, sin deformar y ocupando el máximo del Viewport
+  if (ra < 1.0) FOV = 2.0 * atan(tan(0.5*FOV_orig/ra));
+  else FOV = FOV_orig;
 
   projectTransform ();
   viewTransform ();
@@ -125,6 +136,9 @@ void MyGLWidget::resizeGL (int w, int h)
 {
   ample = w;
   alt = h;
+
+  ra = float(ample) / float(alt);
+  projectTransform();
 }
 
 /*void MyGLWidget::modelTransformModel ()
@@ -197,8 +211,12 @@ void MyGLWidget::modelTransformIdent ()
 
 void MyGLWidget::projectTransform ()
 {
+    if (ra < 1.0) FOV = 2.0 * atan(tan(0.5*FOV_orig/ra));
+    else FOV = FOV_orig;
+  std::cout << "FOV: " << FOV << std::endl;
+
   glm::mat4 Proj;  // Matriu de projecció
-  Proj = glm::perspective(float(M_PI/3.0), 1.0f, radiEsc, 3.0f*radiEsc);
+  Proj = glm::perspective(FOV, ra, radiEsc, 3.0f*radiEsc);
 
   glUniformMatrix4fv (projLoc, 1, GL_FALSE, &Proj[0][0]);
 }
@@ -208,10 +226,30 @@ void MyGLWidget::viewTransform ()
   glm::mat4 View;  // Matriu de posició i orientació
   View = glm::translate(glm::mat4(1.f), glm::vec3(0, 0, -2*radiEsc));
   View = glm::rotate(View, -angleY, glm::vec3(0, 1, 0));
+  View = glm::rotate(View, -angleX, glm::vec3(1, 0, 0));
+  View = glm::translate(View, glm::vec3(-centreEsc));
 
   glUniformMatrix4fv (viewLoc, 1, GL_FALSE, &View[0][0]);
 }
 
+void MyGLWidget::calculaRadiEsc()
+{
+    glm::vec3 Pmax;
+    glm::vec3 Pmin;
+    float modX, modY, modZ;
+    Pmax.x = 10, Pmax.y = 3, Pmax.z = 6.9;
+    Pmin.x = -10, Pmin.y = 0, Pmin.z = -6.9;
+
+    centreEsc[0] = (Pmax.x+Pmin.x)/2;
+    centreEsc[1] = (Pmax.y+Pmin.y)/2;
+    centreEsc[2] = (Pmax.z+Pmin.z)/2;
+
+    modX = pow(Pmax.x - centreEsc.x, 2);
+    modY = pow(Pmax.y - centreEsc.y, 2);
+    modZ = pow(Pmax.z - centreEsc.z, 2);
+
+    radiEsc = sqrt(modX + modY + modZ);
+}
 
 void MyGLWidget::keyPressEvent(QKeyEvent* event) 
 {
@@ -265,11 +303,13 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *e)
 
 void MyGLWidget::creaBuffersLego()
 {
+  modelLego = true;
   creaBuffersModel(lego, "./models/legoman.obj", &VAO_Lego, escalaModel, centreBaseModel);
 }
 
 void MyGLWidget::creaBuffersPilota()
 {
+  modelLego = false;
   creaBuffersModel(pil, "./models/Pilota.obj", &VAO_Pil, escalaPil, centreBasePil);
 }
 
@@ -356,7 +396,10 @@ void MyGLWidget::calculaCapsaModel (Model &p, float &escala, glm::vec3 &centreBa
     if (p.vertices()[i+2] > maxz)
       maxz = p.vertices()[i+2];
   }
-  escala = 3.0/(maxy-miny);                 // Escala retocada!
+
+  if (modelLego) escala = 3.0/(maxy-miny);                 // Escala retocada!
+  else escala = 1.0/(maxy-miny);
+
   centreBase[0] = (minx+maxx)/2.0; 
   centreBase[1] = miny; 
   centreBase[2] = (minz+maxz)/2.0;
