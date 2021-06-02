@@ -1,5 +1,5 @@
 Hay que añadir dos modelos Legoman situados en (-7,0,3) y (-7,0,-3) respectivamente.
-Ambos de altura 3 (escalado) y con orientación hacia el eje X+.
+Ambos de altura 3 (escalado) y con orientación hacia el eje X+ (M_PI/180 * 90) = 90 grados positivos.
 
 También hay que crear tres paredes, en base al modelo cubo calculado por defecto.
 Las paredes tienen las siguientes dimensiones y centros, respectivamente:
