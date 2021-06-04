@@ -70,7 +70,7 @@ void cridaphong(){
     vec3 normalSCO = normalize (normalMatrix * normal);             // Por el momento en el VS lo declararemos así, calcula la matriz para cada vértice, poco eficiente, pero facil
     vec4 focusSCO = view * vec4(posFocus, 1.0);
     vec3 L = normalize (focusSCO.xyz - vertSCO.xyz);
-    fcolor = Lambert(normalSCO, L);
+    fcolor = Phong(normalSCO, L, vertSCO);
     gl_Position = proj * vertSCO;
 }
 

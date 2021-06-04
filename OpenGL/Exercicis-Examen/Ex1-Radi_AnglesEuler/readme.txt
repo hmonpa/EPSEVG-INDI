@@ -18,3 +18,5 @@
 5. float ra, FOV, FOV_orig;
 	Usados para que la escena no se recorte ni deforme, en caso de redimensionamiento del Viewport.
 
+Se modifica también:
+	- viewTransform()

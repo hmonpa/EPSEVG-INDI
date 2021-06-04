@@ -129,9 +129,6 @@ void MyGLWidget::projectTransform ()
 {
   glm::mat4 Proj;  // Matriu de projecció
 
-  if (ra < 1.0) FOV = 2.0 * atan(tan(0.5*FOV_orig/ra));
-  else FOV = FOV_orig;
-
   if (perspectiva)
     Proj = glm::perspective(FOV, ra, radiEsc, 3.0f*radiEsc);
   else

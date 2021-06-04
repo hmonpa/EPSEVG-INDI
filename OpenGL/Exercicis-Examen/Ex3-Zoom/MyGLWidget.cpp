@@ -129,9 +129,6 @@ void MyGLWidget::projectTransform ()
 {
   glm::mat4 Proj;  // Matriu de projecció
 
-  if (ra < 1.0) FOV = 2.0 * atan(tan(0.5*FOV_orig/ra));
-  else FOV = FOV_orig;
-
   if (perspectiva)
     Proj = glm::perspective(FOV, ra, radiEsc, 3.0f*radiEsc);
   else
@@ -174,6 +171,13 @@ void MyGLWidget::mousePressEvent (QMouseEvent *e)
   {
     DoingInteractive = ROTATE;
   }
+
+  // ZOOM con botón derecho
+  if (e->button() & Qt::RightButton &&
+      ! (e->modifiers() & (Qt::ShiftModifier|Qt::AltModifier|Qt::ControlModifier)))
+  {
+    DoingInteractive = ZOOM;
+  }
 }
 
 void MyGLWidget::mouseReleaseEvent( QMouseEvent *)
@@ -193,6 +197,14 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *e)
     viewTransform ();
   }
 
+  if (DoingInteractive == ZOOM)
+  {
+      float FOV_aux = FOV + (e->y() - yClick)/10.0;
+
+      if (FOV_aux < float(M_PI) && FOV_aux > 0.0) FOV = FOV_aux;
+
+      projectTransform();
+  }
   xClick = e->x();
   yClick = e->y();
 

@@ -8,7 +8,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "/home/hector/Escritorio/INDI/OpenGL/Bloc3/models/Model/model.h"
+#include "model.h"
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core 
 {
@@ -45,7 +45,6 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     void modelTransformTerra ();
     void modelTransformPatricio ();
     void calculaCapsaModel ();
-    void calculoSCA();
 
     // VAO names
     GLuint VAO_Patr;
@@ -67,16 +66,18 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     // radi de l'escena
     float radiEsc;
 
-    typedef  enum {NONE, ROTATE} InteractiveAction;
+    typedef  enum {NONE, ROTATE, ZOOM} InteractiveAction;
     InteractiveAction DoingInteractive;
     int xClick, yClick;
-    float angleY, angleX;
+    float angleY;
     bool perspectiva;
 
-    bool SCA;
+    // Nuevas funciones y atributos
+    void modelTransformPatricio2();
+    void calculaRadiEsc();
+    glm::vec3 centreEsc;
 
-    // Declaración de variables que utilizaremos como uniforms
-    GLuint colFocusLoc, posFocusLoc;
-    glm::vec3 colFocus, posFocus;
+    float angleX;
+    float ra, FOV, FOV_orig;
 };
 

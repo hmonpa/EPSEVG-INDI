@@ -55,7 +55,7 @@ vec3 Phong (vec3 NormSCO, vec3 L, vec4 vertSCO)
 }
 
 void main()
-{	
+{
     fcolor = matdiff;
     gl_Position = proj * view * TG * vec4 (vertex, 1.0);
 }
