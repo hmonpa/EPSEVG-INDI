@@ -19,4 +19,5 @@
 	Usados para que la escena no se recorte ni deforme, en caso de redimensionamiento del Viewport.
 
 Se modifica también:
+	- resizeGL(): Se añade calculo automático ra, y recalculo de FOV.
 	- viewTransform()

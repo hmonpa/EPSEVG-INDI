@@ -95,6 +95,9 @@ void MyGLWidget::resizeGL (int w, int h)
   alt = h;
 
   ra = float(ample)/float(alt);
+  if (ra < 1.0) FOV = 2.0 * atan(tan(0.5*FOV_orig/ra));
+  else FOV = FOV_orig;
+
   projectTransform();
 }
 
