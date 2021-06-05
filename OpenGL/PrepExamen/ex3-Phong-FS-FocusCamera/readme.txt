@@ -6,7 +6,7 @@ Importante: Tipos de cámara
 - SC escena:
 	focus = view * vec4(posFocus, 1.0)
 
-- SC OBS:
+- SC OBS (de cámara):
 	focus = vec4(posFocus, 1.0)
 
 Sólo se modifican VS y FS:
