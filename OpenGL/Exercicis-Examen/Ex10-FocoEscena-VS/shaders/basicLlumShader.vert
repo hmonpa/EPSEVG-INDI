@@ -13,6 +13,7 @@ uniform mat4 view;
 uniform mat4 TG;
 
 uniform int pintaVaca;
+uniform int cambiaCamara;
 
 // Hay que crear componentes de material auxiliares, ya que son solo de lectura
 vec3 matambF = matamb;
@@ -21,9 +22,12 @@ vec3 matspecF = matspec;
 float matshinF = matshin;
 
 // Valors per als components que necessitem dels focus de llum
-vec3 colFocus = vec3(0.8, 0.8, 0.8);
+vec3 colFocus = vec3(0.0, 0.8, 0.8);        // Cyan
 vec3 llumAmbient = vec3(0.2, 0.2, 0.2);
 vec3 posFocus = vec3(1, 1, 1);
+
+vec3 colFocusF = colFocus;
+vec3 posFocusF = posFocus;
 
 out vec3 fcolor;
 
@@ -70,14 +74,25 @@ void main()
         matspecF = vec3(1,1,1);
         matdiffF = vec3(0.3, 0.3, 0.3);
         matambF = vec3(0.3, 0.3, 0.3);
+        //matshinF = 100;
     }
 
     vec4 vertSCO = view * TG * vec4(vertex, 1.0);
     mat3 normalMatrix = inverse(transpose(mat3 (view*TG)));
     vec3 normalSCO = normalize(normalMatrix*normal);
-    vec4 focusSCO = vec4(posFocus, 1.0);
-    vec3 L = normalize(focusSCO.xyz - vertSCO.xyz);
+    //vec4 focusSCO = vec4(posFocus, 1.0);
+    //vec3 L = normalize(focusSCO.xyz - vertSCO.xyz);
 
+    vec4 focusSCO;
+    if (cambiaCamara == 1)
+    {
+        posFocusF = vec3(1,1,1);
+        colFocusF = vec3(0.8, 0.8, 0.8);
+        focusSCO = view * vec4(posFocusF, 1.0);
+    }
+    else focusSCO = vec4(posFocusF, 1.0);
+
+    vec3 L = normalize(focusSCO.xyz - vertSCO.xyz);
     fcolor = Phong(normalSCO, L, vertSCO);
     gl_Position = proj * vertSCO;
 }

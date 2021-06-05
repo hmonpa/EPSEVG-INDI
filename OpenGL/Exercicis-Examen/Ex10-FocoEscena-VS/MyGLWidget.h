@@ -98,5 +98,14 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     // Ejercicio 8
     GLuint vacaLoc;
+
+    // Ejercicio 9
+    GLuint teclaX_Loc;
+    float teclaX;
+
+    // Ejercicio 10
+    GLuint teclaL_Loc;
+    float teclaL;
 };
+
 

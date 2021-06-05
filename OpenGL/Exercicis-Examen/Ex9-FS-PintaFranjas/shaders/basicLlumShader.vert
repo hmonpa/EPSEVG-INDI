@@ -70,6 +70,7 @@ void main()
         matspecF = vec3(1,1,1);
         matdiffF = vec3(0.3, 0.3, 0.3);
         matambF = vec3(0.3, 0.3, 0.3);
+        //matshinF = 100;
     }
 
     vec4 vertSCO = view * TG * vec4(vertex, 1.0);

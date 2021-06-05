@@ -39,7 +39,8 @@ void MyGLWidget::iniEscena ()
   zF = 3.0f*radiEsc;
   FOV_orig = 2.0 * asin (radiEsc / (radiEsc*2.0));
   rotaY = 0.0;
-
+  teclaX = 1;
+  teclaL = 1;
 }
 
 void MyGLWidget::iniCamera ()
@@ -198,7 +199,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
       projectTransform ();
       break;
     }
-  case Qt::Key_R: { // canvia òptica entre perspectiva i axonomètrica
+  case Qt::Key_R: {
     rotaY += float(M_PI/6);
      /*glm::mat4 TG(1.f);         // Matriz identidad
      glm::vec3 rotaVRP(1*cos(-rotaY), -0.375, 1*sin(-rotaY));
@@ -208,6 +209,18 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
      //viewTransform();
     //modelTransformVaca();
     //modelTransformPatricio2();
+    break;
+  }
+  case Qt::Key_X: {
+    glUniform1i(teclaX_Loc, teclaX);
+    if (teclaX == 1) teclaX = 0;
+    else teclaX = 1;
+    break;
+  }
+  case Qt::Key_L: {
+    glUniform1i(teclaL_Loc, teclaL);
+    if (teclaL == 1) teclaL = 0;
+    else teclaL = 1;
     break;
   }
     default: event->ignore(); break;
@@ -593,6 +606,8 @@ void MyGLWidget::carregaShaders()
   projLoc = glGetUniformLocation (program->programId(), "proj");
   viewLoc = glGetUniformLocation (program->programId(), "view");
   vacaLoc = glGetUniformLocation (program->programId(), "pintaVaca");
+  teclaX_Loc = glGetUniformLocation (program->programId(), "pintaFranjas");
+  teclaL_Loc = glGetUniformLocation (program->programId(), "cambiaCamara");
 }
 
 
