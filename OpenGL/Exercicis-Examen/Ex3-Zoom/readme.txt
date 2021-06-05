@@ -1,1 +1,1 @@
-Cambiar el main del VS.
+Cambios en las funciones mousePressEvent y mouseMoveEvent
