@@ -80,41 +80,11 @@ class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
     float angleX;
     float ra, FOV, FOV_orig;
 
-    // Ejercicio5
-    void modelTransformVaca();
-    void calculaCapsaVaca();
-    void createBuffersVaca();
-    float escalaVaca;
-    Model vaca;
-    GLuint VAO_Vaca;
-    glm::vec3 centreVaca;
-
-    // Ejercicios 6 y 7
-    float rotaY;
-    glm::vec3 OBS;
-    glm::vec3 VRP;
-    glm::vec3 UP;
-    float zN, zF;
-
-    // Ejercicio 8
-    GLuint vacaLoc;
-
-    // Ejercicio 9
-    GLuint teclaX_Loc;
-    float teclaX;
-
-    // Ejercicio 10
-
-    GLuint teclaL_Loc;
-    int teclaL;
-
+    // Ejercicio 4
 public slots:
-    void canviaCameraEscena();
-    void canviaCameraOBS();
+    void ferZoom(int value);
 
 signals:
-    void signalEscena();
-    void signalOBS();
+    void signalSlider(int value);
 };
-
 

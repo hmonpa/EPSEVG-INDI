@@ -40,24 +40,25 @@
       </spacer>
      </item>
      <item>
-      <widget class="QRadioButton" name="radioButton_2">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Càmera</string>
+        <string>Zoom</string>
        </property>
-       <property name="checked">
-        <bool>true</bool>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radioButton">
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
+      <widget class="QSlider" name="horizontalSlider">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="text">
-        <string>Escena</string>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -100,8 +101,10 @@
    <slots>
     <signal>signalOBS()</signal>
     <signal>signalEscena()</signal>
+    <signal>signalSlider(int)</signal>
     <slot>canviaCameraEscena()</slot>
     <slot>canviaCameraOBS()</slot>
+    <slot>ferZoom(int)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -114,7 +117,7 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>808</x>
+     <x>804</x>
      <y>715</y>
     </hint>
     <hint type="destinationlabel">
@@ -124,66 +127,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioButton_2</sender>
-   <signal>clicked()</signal>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
    <receiver>widget</receiver>
-   <slot>canviaCameraOBS()</slot>
+   <slot>ferZoom(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>768</x>
-     <y>326</y>
+     <x>760</x>
+     <y>361</y>
     </hint>
     <hint type="destinationlabel">
-     <x>686</x>
-     <y>263</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButton</sender>
-   <signal>clicked()</signal>
-   <receiver>widget</receiver>
-   <slot>canviaCameraEscena()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>744</x>
-     <y>364</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>708</x>
-     <y>409</y>
+     <x>668</x>
+     <y>423</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>widget</sender>
-   <signal>signalEscena()</signal>
-   <receiver>radioButton</receiver>
-   <slot>click()</slot>
+   <signal>signalSlider(int)</signal>
+   <receiver>horizontalSlider</receiver>
+   <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>666</x>
-     <y>451</y>
+     <x>678</x>
+     <y>505</y>
     </hint>
     <hint type="destinationlabel">
-     <x>796</x>
-     <y>364</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>widget</sender>
-   <signal>signalOBS()</signal>
-   <receiver>radioButton_2</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>649</x>
-     <y>170</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>788</x>
-     <y>338</y>
+     <x>778</x>
+     <y>361</y>
     </hint>
    </hints>
   </connection>

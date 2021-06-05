@@ -218,14 +218,40 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
     break;
   }
   case Qt::Key_L: {
-    glUniform1i(teclaL_Loc, teclaL);
-    if (teclaL == 1) teclaL = 0;
-    else teclaL = 1;
+    //glUniform1i(teclaL_Loc, teclaL);
+    if (teclaL == 1)
+    {
+        canviaCameraOBS();
+        emit signalOBS();
+    }
+    else
+    {
+        canviaCameraEscena();
+        emit signalEscena();
+    }
     break;
   }
     default: event->ignore(); break;
   }
   update();
+}
+
+
+void MyGLWidget::canviaCameraEscena()
+{
+    makeCurrent();
+    teclaL = 1;
+    glUniform1i(teclaL_Loc, teclaL);
+
+    update();
+}
+
+void MyGLWidget::canviaCameraOBS()
+{
+    makeCurrent();
+    teclaL = 0;
+    glUniform1i(teclaL_Loc, teclaL);
+    update();
 }
 
 void MyGLWidget::mousePressEvent (QMouseEvent *e)
